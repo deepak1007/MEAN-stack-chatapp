@@ -1,0 +1,32 @@
+.container-fluid {
+    height:100%;
+}
+.carousel-container{
+    height:100% !important;
+    overflow-x: hidden;
+    
+}
+
+.carousel-container .col-12{
+    padding:0 !important;
+}
+
+.carousel-item .flexed-element-container{
+      height:81vh;
+      width:100%;
+      display:flex;
+      flex-direction:row;
+      align-items: center;  
+}
+
+.carousel-item .flexed-element-container .text{
+    padding:0px 20px !important;
+}
+.carousel-itme .flexed-element-container .pic{
+    height:100%;
+    width:100%;
+}
+.carousel-item .flexed-element-container .pic img{
+     width:100%;
+     
+}

@@ -1,0 +1,56 @@
+
+<div class="container-fluid">
+    <div class="row">
+        
+        
+        <div class="col-md-6 order-2 order-md-1 picturebox">
+            <div class="img">
+                <img src="..\..\assets\undraw_sign_in_e6hj.png" alt="computer and servers that represents unlock and lock">
+            </div>
+        </div>
+
+        <div class="col-md-6 order-1 order-md-2 signup-box">
+            <div class="signup-form-container">
+                <h2 class='text-center py-1'><small>Make Your Account</small></h2>
+
+                <form #signupform="ngForm" class='form' (ngSubmit)='onSignup(signupform.value)'>
+
+                    <div class="form-group">
+                        <label for="firstName" class='form-label'></label>
+                        <input type="text" class='form-control' pattern ="[a-zA-Z]+" required #firstName="ngModel" placeholder="enter your first name(ex:Rahul)" name="firstName" [(ngModel)]="valuefirstName" ngModel>
+                        <span *ngIf="firstName.invalid && firstName.touched" class='error'> *please enter valid name</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName" class='form-label'></label>
+                        <input type="text" class='form-control' pattern ="[a-zA-Z]+" required #lastName="ngModel" placeholder="enter your last name(ex:sharma)" name="lastName" [(ngModel)]="valuelastName" ngModel>
+                        <span *ngIf="lastName.invalid && lastName.touched" class='error'> *please enter valid last name</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class='form-label'></label>
+                        <input type="text" class='form-control' pattern ="[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]+" required email #email="ngModel" placeholder="enter email" name="email" [(ngModel)]="valueemail" ngModel>
+                        <span *ngIf="email.invalid && email.touched" class='error'> *please enter valid email</span>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="password" class='form-label'></label>
+                        <input type="password" class='form-control' required  #password="ngModel" placeholder="enter Password" minlength="8" maxlength="15" 
+                         name="password" [(ngModel)]='valuepassword' ngModel>
+                        <span *ngIf="password.invalid && password.touched" class='error'> *Please enter password between 8 to 15 characters</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class='form-label'></label>
+                        <input type="password" class='form-control' required  #confirmPassword="ngModel" placeholder="Confirm Password" minlength="8" maxlength="15" 
+                         name="confirmPassword" [(ngModel)]='valueconfirmPassword' ngModel>
+                        <span *ngIf="password.value != confirmPassword.value" class='error'> *password did not match </span>
+                    </div>
+                
+                   <button type='submit' [disabled]='signupform.invalid' class='btn btn-dark text-white py-md-2 px-lg-5 px-2'>signup</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
