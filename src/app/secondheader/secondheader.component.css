@@ -24,6 +24,8 @@
     .second-header {
         display:none;
         height:100vh;
+        position: absolute;
+        z-index:3;
     }
     .second-header ul{
         margin-top:20px;
