@@ -1,5 +1,12 @@
 .normal-pages-main-screen{
     width:100%;
-    height:90%;
+    height:80vh;
     background:whitesmoke;
+}
+
+
+@media screen and (max-width:700px){
+    .normal-pages-main-screen{
+        min-height:90vh;
+    }
 }
