@@ -4,6 +4,9 @@ import { NormalpagesComponent } from './normalpages/normalpages.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { ChatzoneComponent } from './chatzone/chatzone.component';
+import { ProfileComponent } from './profile/profile.component';
+import { ChatComponent } from './chat/chat.component';
 
 
 const routes: Routes = [
@@ -13,6 +16,12 @@ const routes: Routes = [
     {path:'home', component:HomeComponent},
     {path:'login', component:LoginComponent},
     {path:'sign-up', component:SignupComponent}
+  ]},
+  
+  {path:'chat-dashboard', component:ChatzoneComponent, children:[
+    {path:'', component:ProfileComponent},
+    {path:'profile', component:ProfileComponent},
+    {path:'chat', component:ChatComponent}
   ]}
 
 ];

@@ -1,3 +1,7 @@
+.container-fluid{
+    display:inline-block;
+}
+
 .top-header{
     display:flex;
     justify-content: space-between;

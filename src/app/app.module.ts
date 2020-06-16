@@ -11,6 +11,10 @@ import { FooterComponent } from './footer/footer.component';
 import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
 import { SignupComponent } from './signup/signup.component';
+import { ChatzoneComponent } from './chatzone/chatzone.component';
+import { ChatzonesidenavComponent } from './chatzonesidenav/chatzonesidenav.component';
+import { ProfileComponent } from './profile/profile.component';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +25,11 @@ import { SignupComponent } from './signup/signup.component';
     HomeComponent,
     FooterComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    ChatzoneComponent,
+    ChatzonesidenavComponent,
+    ProfileComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
