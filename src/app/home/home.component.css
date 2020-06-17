@@ -68,7 +68,7 @@
     padding:10px 0px;
     display:flex;
     position:absolute;
-    animation: slider 40s infinite;
+    animation: slider 16s infinite;
 }
 
 @keyframes slider{
