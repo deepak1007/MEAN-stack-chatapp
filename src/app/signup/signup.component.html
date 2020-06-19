@@ -13,7 +13,7 @@
             <div class="signup-form-container">
                 <h2 class='text-center py-1'><small>Make Your Account</small></h2>
 
-                <form #signupform="ngForm" class='form' (ngSubmit)='onSignup(signupform.value)'>
+                <form #signupform="ngForm" class='form' (ngSubmit)='onSignup()'>
 
                     <div class="form-group">
                         <label for="firstName" class='form-label'></label>
@@ -44,7 +44,7 @@
                         <label for="confirmPassword" class='form-label'></label>
                         <input type="password" class='form-control' required  #confirmPassword="ngModel" placeholder="Confirm Password" minlength="8" maxlength="15" 
                          name="confirmPassword" [(ngModel)]='valueconfirmPassword' ngModel>
-                        <span *ngIf="password.value != confirmPassword.value" class='error'> *password did not match </span>
+                        <span *ngIf="confirmPassword.touched && password.value != confirmPassword.value" class='error'> *password did not match </span>
                     </div>
                 
                    <button type='submit' [disabled]='signupform.invalid' class='btn btn-dark text-white py-md-2 px-lg-5 px-2'>signup</button>

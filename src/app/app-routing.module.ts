@@ -7,6 +7,7 @@ import { SignupComponent } from './signup/signup.component';
 import { ChatzoneComponent } from './chatzone/chatzone.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ChatComponent } from './chat/chat.component';
+import { AuthGuard } from './auth.guard';
 
 
 const routes: Routes = [
@@ -17,8 +18,7 @@ const routes: Routes = [
     {path:'login', component:LoginComponent},
     {path:'sign-up', component:SignupComponent}
   ]},
-  
-  {path:'chat-dashboard', component:ChatzoneComponent, children:[
+  {path:'chat-dashboard', component:ChatzoneComponent, canActivate:[AuthGuard], children:[
     {path:'', component:ProfileComponent},
     {path:'profile', component:ProfileComponent},
     {path:'chat', component:ChatComponent}

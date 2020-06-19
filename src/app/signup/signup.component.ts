@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '../data.service';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-signup',
@@ -11,14 +13,19 @@ export class SignupComponent implements OnInit {
   valueemail;
   valuepassword;
   valueconfirmPassword;
-  constructor() { }
+  constructor(private ds:DataService, private router: Router) { }
 
   ngOnInit(): void {
   }
 
-  onSignup(data)
+  onSignup()
   {
-     alert(data);
+   this.ds.signup({firstname:this.valuefirstName, lastname:this.valuelastName, email:this.valueemail, password:this.valuepassword}).subscribe((response)=>{
+      if(response.status == "ok"){
+        alert("congratulations you are registered please login to continue");
+        this.router.navigate(['/login']);
+      }
+   })
   }
 
 }
