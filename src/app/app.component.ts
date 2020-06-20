@@ -7,4 +7,20 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'chatapp';
+
+  ngOnInit(): void {
+    
+
+    window.onresize= function(){
+      if(window.innerWidth >= 600)
+      {  var secondheader =  <HTMLElement><any> document.getElementsByClassName("second-header")[0];
+        secondheader.style.display = "block";
+      }
+      else{
+        var secondheader =  <HTMLElement><any> document.getElementsByClassName("second-header")[0];
+        secondheader.style.display = "none";
+      }
+    }
+  }
+  
 }
