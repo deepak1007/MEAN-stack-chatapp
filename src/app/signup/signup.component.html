@@ -16,34 +16,30 @@
                 <form #signupform="ngForm" class='form' (ngSubmit)='onSignup()'>
 
                     <div class="form-group">
-                        <label for="firstName" class='form-label'></label>
-                        <input type="text" class='form-control' pattern ="[a-zA-Z]+" required #firstName="ngModel" placeholder="enter your first name(ex:Rahul)" name="firstName" [(ngModel)]="valuefirstName" ngModel>
+                        <label for="firstName" class='form-label border'>
+                        <input type="text" class='form-control' pattern ="[a-zA-Z]+" required #firstName="ngModel" placeholder="enter your first name(ex:Rahul)" name="firstName" [(ngModel)]="valuefirstName" ngModel></label>
                         <span *ngIf="firstName.invalid && firstName.touched" class='error'> *please enter valid name</span>
                     </div>
-
                     <div class="form-group">
-                        <label for="lastName" class='form-label'></label>
-                        <input type="text" class='form-control' pattern ="[a-zA-Z]+" required #lastName="ngModel" placeholder="enter your last name(ex:sharma)" name="lastName" [(ngModel)]="valuelastName" ngModel>
+                        <label for="lastName" class='form-label'>
+                        <input type="text" class='form-control' pattern ="[a-zA-Z]+" required #lastName="ngModel" placeholder="enter your last name(ex:sharma)" name="lastName" [(ngModel)]="valuelastName" ngModel></label>
                         <span *ngIf="lastName.invalid && lastName.touched" class='error'> *please enter valid last name</span>
                     </div>
-
                     <div class="form-group">
-                        <label for="email" class='form-label'></label>
-                        <input type="text" class='form-control' pattern ="[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]+" required email #email="ngModel" placeholder="enter email" name="email" [(ngModel)]="valueemail" ngModel>
+                        <label for="email" class='form-label'>
+                        <input type="text" class='form-control' pattern ="[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]+" required email #email="ngModel" placeholder="enter email" name="email" [(ngModel)]="valueemail" ngModel></label>
                         <span *ngIf="email.invalid && email.touched" class='error'> *please enter valid email</span>
                     </div>
-                
                     <div class="form-group">
-                        <label for="password" class='form-label'></label>
+                        <label for="password" class='form-label'>
                         <input type="password" class='form-control' required  #password="ngModel" placeholder="enter Password" minlength="8" maxlength="15" 
-                         name="password" [(ngModel)]='valuepassword' ngModel>
+                         name="password" [(ngModel)]='valuepassword' ngModel></label>
                         <span *ngIf="password.invalid && password.touched" class='error'> *Please enter password between 8 to 15 characters</span>
                     </div>
-
                     <div class="form-group">
-                        <label for="confirmPassword" class='form-label'></label>
+                        <label for="confirmPassword" class='form-label'>
                         <input type="password" class='form-control' required  #confirmPassword="ngModel" placeholder="Confirm Password" minlength="8" maxlength="15" 
-                         name="confirmPassword" [(ngModel)]='valueconfirmPassword' ngModel>
+                         name="confirmPassword" [(ngModel)]='valueconfirmPassword' ngModel></label>
                         <span *ngIf="confirmPassword.touched && password.value != confirmPassword.value" class='error'> *password did not match </span>
                     </div>
                 

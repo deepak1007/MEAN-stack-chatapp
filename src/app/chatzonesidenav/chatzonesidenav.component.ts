@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chatzonesidenav',
@@ -7,11 +8,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChatzonesidenavComponent implements OnInit {
   active;
-  constructor() {
+
+  constructor(private route:Router) {
     this.active = 1
    }
 
   ngOnInit(): void {
   }
 
+  logout(){
+    var confir = confirm("Do you really want to logout?");
+    if(confir)
+    {
+      localStorage.removeItem('email');
+      this.route.navigate(['']);
+    }
+  }
 }

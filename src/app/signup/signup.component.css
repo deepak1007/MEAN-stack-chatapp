@@ -1,11 +1,11 @@
-
+* {
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
 .error {
     color:red;
 }
-.form-group{
-    margin:5px 5px !important;
-    padding:2px 0px !important;
-}
+
 input.ng-valid{
   border-left:2px solid green;    
 }
@@ -39,9 +39,24 @@ input.ng-invalid{
 
 
 }
+
 .signup-form-container form{
    box-sizing: border-box;
    max-height:min-content;
+}
+
+.form-group{
+    padding:4px;
+    margin:0px;
+}
+.form-label{
+    width:100%;
+    margin:2px;
+    padding:0px;
+}
+
+.signup-form-container form .form-control{
+   
 }
 
 .picturebox{
@@ -67,7 +82,24 @@ input.ng-invalid{
 }
 
 @media screen and (max-width:600px){
+    .picturebox .img{
+        display:none;
+    }
+    .row{
+        height:unset;
+        min-height:90vh;
+    }
+
+    .signup-box{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height:90vh;
+    }
+    .container-fluid{
+        overflow-y: scroll;
+    }
     .signup-form-container{
-        width:90%;
+        width:100%;
     }
 }

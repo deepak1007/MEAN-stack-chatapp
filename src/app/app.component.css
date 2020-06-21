@@ -4,3 +4,12 @@
 
 }
 
+@media screen and (max-width:600px){
+      
+    .main-screen{
+        height:unset;
+        min-height:90vh;
+    }
+ 
+}
+

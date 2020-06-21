@@ -37,12 +37,15 @@
      
 }
 */
+*{
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
 
-
+@media screen and (min-width:600px){
 .container-fluid {
     height:100%;
     padding:0px;
-    overflow-x: hidden;
     
 }
 
@@ -57,7 +60,6 @@
     margin:0;
     background:whitesmoke;
     position:relative;
-    overflow:hidden;
    
 }
 
@@ -124,42 +126,53 @@
 #piclast{
     width:90%;
 }
-
+}
 @media screen and (max-width:600px){
-.outer{
-    overflow-y: scroll;
+
+
+.container-fluid{
+    width:100%;
+    padding:0;
 }
 
+.row{
+    height:unset;
+    min-height:100vh;
+}    
+
+
 .inner{
-    display:flex;
+     
+    display:block;
+    height:unset;
+    min-height:90vh;
     width:100%;
-    flex-direction:row;
     animation:none;
-    flex-wrap:wrap;
+
     
 }
 
 .inner .flexed-element-container{
     display:flex;
-    flex-wrap: wrap;
-    height:100%;
-    width:100%;
-    flex-direction:row;
-    justify-content: flex-start;
-    box-sizing: border-box;
+    flex-direction:column;
+    justify-content: space-evenly;
+    height:unset;
+    min-height:90vh;
    
  }
 
- .inner .flexed-element-container .text{
+ .inner .flexed-element-container .text {
     padding:0px 20px !important;
-    height:45%;
+    height:40vh;
     order:2;
 }
-
+.text h3{
+    overflow:hidden;
+}
 .inner .flexed-element-container .pic{
     display:block;
     width:100%;
-    height:35%;
+    height:35vh;
     order:1;
     padding:0px;
 }
