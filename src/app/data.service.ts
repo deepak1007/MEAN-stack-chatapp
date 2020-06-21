@@ -17,4 +17,13 @@ export class DataService {
     return this.httpclient.post('http://localhost:8000/sign-up', data);
   }
 
+  authenticationCheck():Boolean{
+    if(localStorage.getItem('email')){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
 }
