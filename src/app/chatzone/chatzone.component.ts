@@ -7,9 +7,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChatzoneComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+
+   }
 
   ngOnInit(): void {
+      
+    var navbtn = <HTMLElement><any> document.getElementsByClassName('nav-show-btn')[0];
+    navbtn.style.display = "none";
+
+
   }
 
 }

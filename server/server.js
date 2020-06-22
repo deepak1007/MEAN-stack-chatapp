@@ -5,7 +5,7 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 
 var Dbname = "ChatAppDB";
-var client  = new MongoClient('mongodb://localhost:27017/', {useNewUrlParser:true,useUnifiedTopology: true})
+var client  = new MongoClient('mongodb+srv://deepaksharma:deepak12333@deepak-adqsa.mongodb.net/ChatAppDB?retryWrites=true&w=majority', {useNewUrlParser:true,useUnifiedTopology: true})
 var connectedObj;
 
 client.connect((err, con)=>{
@@ -41,7 +41,7 @@ app.post('/login', bodyParser.json(), (req, res)=>{
             res.status(200).send({status:"ok", data:{name:data[0].name , email:email, auth:1}});
         }
         else{
-            res.status(300).send({status:"not ok",data:{err:"couldn't find any data sorry!"}});
+            res.send({status:"not ok",data:{err:"couldn't find any data sorry!"}});
         }
     })
     
@@ -51,11 +51,11 @@ app.post('/login', bodyParser.json(), (req, res)=>{
 app.post('/sign-up', bodyParser.json(), (req, res)=>{
     var collection = connectedObj.db(Dbname).collection("users");
     collection.insertOne(req.body,(err, data)=>{
-        if(!err && data.length>0){
+        if(!err){
             res.status(201).send({status:"ok", data:{name:req.body.firstname, email: req.body.email}});
         }
         else{
-            res.status(300).send({status:"not ok", data:{err:"sorry an error occured wile signing in"}})
+            res.send({status:"not ok", data:{err:"sorry an error occured wile signing in"}})
         }
     })
 })
