@@ -12,7 +12,7 @@
 }
 .profile-container {
     display:flex;
-    flex-direction:row;
+    flex-direction:column;
     justify-content: center;
     align-items: center;
 }
@@ -34,6 +34,7 @@
 .details{
  width:50%;
  margin-left:10px;
+ margin-top:20px;
 }
 .form-group{
     margin:0;
@@ -47,6 +48,12 @@
 
 .form-label{
     width:100% !important;
+}
+.form-control{
+    text-align: center;
+}
+option {
+    text-align:center;
 }
 .blur-bg{
     width:100%;
