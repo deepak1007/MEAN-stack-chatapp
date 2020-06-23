@@ -10,6 +10,7 @@
     padding:10px 0px;
    display:inline-block;
    position:fixed;
+   z-index: 9999;
    bottom:0px;
    background:whitesmoke;
 }
@@ -27,10 +28,11 @@
 }
 
 
-@media screen and (min-width:700px){
+@media screen and (min-width:650px){
     
     .sidenavcontainer{
         position:fixed;
+        top:47px;
         height:100%;
         width:8vh;
         bottom:unset;
