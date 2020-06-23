@@ -5,8 +5,20 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class DataService {
-
+  details;
   constructor(private httpclient: HttpClient) { }
+  
+ 
+
+  filldetails(data){
+    //takes the data from login and fills it in details object , this can be used through out the execution.
+    this.details = {};
+    this.details.FullName = data.FullName;
+    this.details.email = data.email;
+    this.details.password = data.password;
+    console.log(data);
+  }
+
   
   login(data):any{
     

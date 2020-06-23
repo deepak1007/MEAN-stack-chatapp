@@ -5,7 +5,7 @@ import { ChatzonesidenavComponent } from './chatzonesidenav.component';
 describe('ChatzonesidenavComponent', () => {
   let component: ChatzonesidenavComponent;
   let fixture: ComponentFixture<ChatzonesidenavComponent>;
-
+   
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ChatzonesidenavComponent ]
