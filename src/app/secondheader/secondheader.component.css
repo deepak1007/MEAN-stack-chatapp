@@ -24,11 +24,12 @@
     .second-header {
         display:none;
         height:100vh;
-        position: absolute;
+        position: fixed;
         z-index:3;
+        transition:2s;
     }
     .second-header ul{
-        margin-top:20px;
+        margin-top:40px;
         flex-direction:column;
     }
     .second-header ul div{

@@ -43,6 +43,10 @@
     .toggle-btn{
        display:block;
     }
+    .toggle-btn{
+        font-size: 20px;
+        font-weight: bolder;
+    }
 
     .second-header {
         display:none;
