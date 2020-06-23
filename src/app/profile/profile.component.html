@@ -3,6 +3,8 @@
         <div class="col-12 mt-5">
             
             <div class="profile-container">
+                <h2 class='text-center mb-3'><small>Your Profile</small></h2>
+                    
                 <!-- profile pic -->
                <div class="profile-pic">
                    <img src="../../assets/undraw_friends_online_klj6.png" alt="">
@@ -18,16 +20,20 @@
                <div class="details">
                    <form action="">
                        <div class="form-group">
-                           <label for="fullname" class='form-label'> <input type="text" class='form-control' name='fullname' value="Deepak Sharma" Disabled></label>
+                           <label for="fullname" class='form-label'> <input type="text" class='form-control' name='fullname' [value]="FullName"></label>
                        </div>
                        
                        <div class="form-group">
-                        <label for="email" class='form-label'> <input type="text" class='form-control' name='fullname' value="DeepakSharma@gmail.com" Disabled></label>
+                        <label for="email" class='form-label'> <input type="text" class='form-control' name='fullname' [value]="email" Disabled></label>
                        </div>
 
                        <div class="form-group">
-                        <label for="pasword" class='form-label'> <input type="password" class='form-control' name='fullname' value="Deepak Sharma" Disabled> </label>
+                        <label for="pasword" class='form-label'> <input type="password" class='form-control' name='fullname' [value]="password" Disabled> </label>
                        </div>
+                       
+                        <div class="form-group">
+                            <label for="about" class='form-label'><textarea name="about" id="about" cols="30" rows="3" class='form-control' [value]="about"></textarea></label>
+                        </div>
 
                        <div class="form-group">
                         <select name="gender" id="" class='form-control'>
@@ -38,6 +44,11 @@
                         </select>
                        </div>
                    </form>
+                   <div class="buttons text-center mb-5">
+                    <div class="btn border-danger py-2 px-3 mt-3">cancel</div>
+                    <div class="btn btn-primary py-2 px-4 ml-2 mt-3">Save</div>
+                   </div>
+
                </div>
                <!--end details -->
 

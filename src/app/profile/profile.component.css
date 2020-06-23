@@ -88,10 +88,18 @@ option {
         flex-direction: column;
     }
     .details{
-        width:80%;
-        margin:10px 0px;
+        width:70%;
+        margin:20px 0px;
     }
     .form-control{
         text-align: center;
+    }
+    .profile-pic{
+        width:180px;
+        height:180px;
+    }
+    textarea{
+        text-align:justify;
+        font-family: 'Times New Roman', Times, serif;
     }
 }

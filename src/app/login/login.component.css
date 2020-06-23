@@ -34,6 +34,13 @@ input.ng-invalid{
 
 
 }
+.form-label{
+    padding:0px;
+}
+.form-group{
+    margin:0px;
+    padding:0px;
+}
 
 .picturebox{
     height:100%;
