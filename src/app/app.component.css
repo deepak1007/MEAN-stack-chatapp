@@ -1,6 +1,8 @@
 .main-screen {
     width:100vw;
     height:90vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
 
 }
 

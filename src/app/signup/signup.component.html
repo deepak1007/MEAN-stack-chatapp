@@ -16,7 +16,7 @@
                 <form #signupform="ngForm" class='form' (ngSubmit)='onSignup()'>
 
                     <div class="form-group">
-                        <label for="firstName" class='form-label border'>
+                        <label for="firstName" class='form-label'>
                         <input type="text" class='form-control' pattern ="[a-zA-Z]+" required #firstName="ngModel" placeholder="enter your first name(ex:Rahul)" name="firstName" [(ngModel)]="valuefirstName" ngModel></label>
                         <span *ngIf="firstName.invalid && firstName.touched" class='error'> *please enter valid name</span>
                     </div>
