@@ -8,21 +8,26 @@ import { ChatzoneComponent } from './chatzone/chatzone.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ChatComponent } from './chat/chat.component';
 import { AuthGuard } from './auth.guard';
+import { MessageareaComponent } from './messagearea/messagearea.component';
 
 
 const routes: Routes = [
   
   {path:'', component:NormalpagesComponent, children:[
     {path:'', component:HomeComponent},
-    {path:'home', component:HomeComponent},
     {path:'login', component:LoginComponent},
     {path:'sign-up', component:SignupComponent}
   ]},
+
+   {path:'home',redirectTo:'',  component:HomeComponent},
+
   {path:'chat-dashboard', component:ChatzoneComponent, canActivate:[AuthGuard], children:[
     {path:'', component:ProfileComponent},
     {path:'profile', component:ProfileComponent},
-    {path:'chat', component:ChatComponent}
-  ]}
+    {path:'chat', component:ChatComponent},
+    {path:'message-area', component:MessageareaComponent}
+  ]}, 
+ 
 
 ];
 

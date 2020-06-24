@@ -10,10 +10,14 @@
 .second-header ul div li{
     color:white;
     padding:3px 20px;
+    border:0px !important;
 }
 
 .second-header ul div li:hover{
     background:green;
+}
+.second-header ul div li:visited{
+    border: 1px solid white;
 }
 
 @media screen and (max-width:600px){

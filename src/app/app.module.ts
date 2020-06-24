@@ -16,6 +16,7 @@ import { ChatzonesidenavComponent } from './chatzonesidenav/chatzonesidenav.comp
 import { ProfileComponent } from './profile/profile.component';
 import { ChatComponent } from './chat/chat.component';
 import { HttpClientModule } from '@angular/common/http';
+import { MessageareaComponent } from './messagearea/messagearea.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { HttpClientModule } from '@angular/common/http';
     ChatzoneComponent,
     ChatzonesidenavComponent,
     ProfileComponent,
-    ChatComponent
+    ChatComponent,
+    MessageareaComponent
   ],
   imports: [
     BrowserModule,

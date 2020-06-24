@@ -1,5 +1,5 @@
 .container-fluid{
-    display:inline-block;
+
 }
 
 .top-header{
@@ -8,7 +8,9 @@
     align-items: center;
     position:relative;
 }
-
+h3{
+    font-size:25px;
+}
 .text span{
     transform:scale(0.6);
     margin-left:5px;
@@ -30,6 +32,7 @@
     color:white;
     margin: 0 3vw;
 }
+
 
 
 @media screen and (max-width:600px){
