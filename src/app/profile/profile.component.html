@@ -8,10 +8,10 @@
                     
                 <!-- profile pic -->
                <div class="profile-pic">
-                   <img src="../../assets/undraw_friends_online_klj6.png" alt="">
-                   <input type="file" name="propic" id="propic">
+                   <img [src]="proPic_src" alt="">
+                   <input type="file" name="propic" id="propic" accept="image/*" #imageFile (change)="fileSelectAndUpload($event)">
                    <div class='blur-bg'>
-                    <div class="btn" id='profilepicuploader'>+</div>
+                    <div class="btn" id='profilepicuploader' (click)="imageFile.click()">+</div>
                    </div>
                </div>
                <!-- end profile pic -->

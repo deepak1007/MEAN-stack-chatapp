@@ -1,10 +1,24 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const multer = require('multer');
+
+
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 
 var Dbname = "ChatAppDB";
+const DIR = './server/upload';
+ 
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, DIR);
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.fieldname + '-' + Date.now() + "-"+  file.originalname.split('@')[0] + '.' + "jpg");
+    }
+});
+let upload = multer({storage: storage});
 
 /*var client  = new MongoClient('mongodb+srv://deepaksharma:deepak12333@deepak-adqsa.mongodb.net/ChatAppDB?retryWrites=true&w=majority', {useNewUrlParser:true,useUnifiedTopology: true});
 */
@@ -27,7 +41,9 @@ client.connect((err, con)=>{
 
 
 const app = express();
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(express.static('./uploads'));
 app.use(cors());
 
 
@@ -74,7 +90,6 @@ app.get('/get-details/:email', (req, res)=>{
     var collection = connectedObj.db(Dbname).collection("users");
     collection.find({email:req.params['email']}).toArray((err,data)=>{
        if(!err && data.length>0){
-           console.log(data);
            var fullname = data[0].firstname + data[0].lastname;
            res.send({status:"200" , data:{FullName:fullname , email:data[0].email, password: "xyhsyxsahfhasdf"}});
        }
@@ -85,5 +100,40 @@ app.get('/get-details/:email', (req, res)=>{
 })
 
 
+app.post("/upload-profile-picture/:email", upload.single('profilePic'), (req, res)=>{
+    if (!req.file) {
+        console.log("Your request doesn’t have any file");
+        return res.send({
+          success: false
+        });
+    
+      } else {
+        var collection = connectedObj.db(Dbname).collection('users');
 
+        collection.updateOne({email:req.params['email']}, {$set:{proPic: req.file.filename}},(err, data)=>{
+            
+            if(err)
+              res.send({success:false});
+            else{
+                console.log('Your file has been received successfully');
+                return res.send({
+                  success: true,
+                  proPic_src : "http://localhost:8000/uploads/"+req.file.filename
+                })
+            }
+          
+        })  
+       
+      }
+});
 
+app.get("/profile-picture/:email", bodyParser.json(), (req, res)=>{
+     var collection = connectedObj.db(Dbname).collection('users');
+     collection.find({email:req.params['email']}).toArray((err, data)=>{
+         if(err){
+             res.send({success: false});
+         }else{
+             res.send({success:true, proPic_src: "uploads/"+data[0].proPic}); 
+         }
+     })
+})
