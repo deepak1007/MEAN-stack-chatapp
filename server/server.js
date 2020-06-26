@@ -2,8 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
-
-
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 
@@ -43,7 +41,7 @@ client.connect((err, con)=>{
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(express.static('./uploads'));
+app.use(express.static(__dirname + '/upload')); 
 app.use(cors());
 
 
@@ -62,7 +60,7 @@ app.post('/login', bodyParser.json(), (req, res)=>{
             console.log(data);
             console.log(data.length);
             var  fullname =  data[0].firstname + data[0].lastname;
-            res.status(200).send({status:"ok", data:{FullName: fullname , email:email, auth:1}});
+            res.status(200).send({status:"ok", data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender, auth:1}});
         }
         else{
             res.status(404).send({status:"not ok",data:{err:"couldn't find any data sorry!"}});
@@ -90,13 +88,24 @@ app.get('/get-details/:email', (req, res)=>{
     var collection = connectedObj.db(Dbname).collection("users");
     collection.find({email:req.params['email']}).toArray((err,data)=>{
        if(!err && data.length>0){
-           var fullname = data[0].firstname + data[0].lastname;
-           res.send({status:"200" , data:{FullName:fullname , email:data[0].email, password: "xyhsyxsahfhasdf"}});
+           var fullname = data[0].firstname + " " + data[0].lastname;
+           res.send({status:"200" , data:{FullName:fullname , email:data[0].email, password: data[0].password, about:data[0].about||"", gender:data[0].gender||''}});
        }
        else{
            res.status(404).send({status:"404", data:{errMsg: "sorry no data found"}});
        }
     });
+})
+
+app.post('/save-details/:email', bodyParser.json(), (req, res)=>{
+    var collection = connectedObj.db(Dbname).collection("users");
+    collection.updateOne({email:req.params['email']}, {$set:{password:req.body.password,about:req.body.about, gender:req.body.gender}}, (err, data)=>{
+        if(!err){
+            res.send({success:true});
+        }else{
+            res.send({success:false});
+        }
+    })
 })
 
 
@@ -118,7 +127,7 @@ app.post("/upload-profile-picture/:email", upload.single('profilePic'), (req, re
                 console.log('Your file has been received successfully');
                 return res.send({
                   success: true,
-                  proPic_src : "http://localhost:8000/uploads/"+req.file.filename
+                  proPic_src : "http://localhost:8000/"+req.file.filename
                 })
             }
           
@@ -127,13 +136,15 @@ app.post("/upload-profile-picture/:email", upload.single('profilePic'), (req, re
       }
 });
 
+
+
 app.get("/profile-picture/:email", bodyParser.json(), (req, res)=>{
      var collection = connectedObj.db(Dbname).collection('users');
      collection.find({email:req.params['email']}).toArray((err, data)=>{
          if(err){
              res.send({success: false});
          }else{
-             res.send({success:true, proPic_src: "uploads/"+data[0].proPic}); 
+             res.send({success:true, proPic_src: data[0].proPic}); 
          }
      })
 })
