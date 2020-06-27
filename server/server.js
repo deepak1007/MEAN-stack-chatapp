@@ -4,10 +4,21 @@ const cors = require('cors');
 const multer = require('multer');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
+const soc = require('socket.io');
 
-var Dbname = "ChatAppDB";
+
+const app = express();
+const Dbname = "ChatAppDB";
 const DIR = './server/upload';
- 
+let connectedObj;
+
+app.listen(8000, () => {
+    console.log('Server started!')
+});
+
+const io = soc.server(app);
+
+
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, DIR);
@@ -18,13 +29,10 @@ let storage = multer.diskStorage({
 });
 let upload = multer({storage: storage});
 
+
 /*var client  = new MongoClient('mongodb+srv://deepaksharma:deepak12333@deepak-adqsa.mongodb.net/ChatAppDB?retryWrites=true&w=majority', {useNewUrlParser:true,useUnifiedTopology: true});
 */
-
 var client  = new MongoClient('mongodb://localhost:27017/', {useNewUrlParser:true,useUnifiedTopology: true});
-
-var connectedObj;
-
 client.connect((err, con)=>{
     if(!err){
         connectedObj = con;
@@ -37,17 +45,14 @@ client.connect((err, con)=>{
 
 
 
-
-const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(__dirname + '/upload')); 
 app.use(cors());
 
 
-app.listen(8000, () => {
-    console.log('Server started!')
-});
+
+
 
 
 
