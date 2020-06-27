@@ -10,9 +10,12 @@ export class ProfileComponent implements OnInit {
   FullName;
   email;
   password;
+  about="";
+  gender='';
+  gender_value;
   SelectedProPic;
   proPic_src;
-  about = "this is me bro!"; //demo text for about section
+
 
   constructor( private ds : DataService, private Httpc: HttpClient) { }
 
@@ -33,6 +36,8 @@ export class ProfileComponent implements OnInit {
    { this.FullName = this.ds.details.FullName;
     this.email = this.ds.details.email;
     this.password = this.ds.details.password;
+    this.about  = this.ds.details.about;
+    this.gender = this.ds.details.gender;
    }
    else{
      //if details in ds is not filled already that is the user has not come directly from login page then get the email from local storage and get the details from database and save it in details
@@ -44,12 +49,19 @@ export class ProfileComponent implements OnInit {
             this.FullName = resp.data.FullName;
             this.email = resp.data.email;
             this.password = resp.data.password;
+            this.about = resp.data.about;
+            this.gender = resp.data.gender;
           }
         });
       }
    }
-  }
 
+  }
+  
+  changeGender(e){
+    this.gender = e.target.options[e.target.selectedIndex].value;
+    console.log(this.gender);
+  }
 
   fileSelectAndUpload(event)
   { console.log(event);
@@ -63,6 +75,24 @@ export class ProfileComponent implements OnInit {
     })
     
   }
+
+
+  savedetails(){
+    var data = {password:this.password, gender:this.gender, about:this.about};
+    console.log(data);
+    this.Httpc.post("http://localhost:8000/save-details/"+ localStorage.getItem('email'),data).subscribe((res:any)=>{
+      console.log(res);
+    })
+  }
   
+  cancelChanges(){
+    
+     this.FullName = this.ds.details.FullName;
+     this.email = this.ds.details.email;
+     this.password = this.ds.details.password;
+     this.about  = this.ds.details.about;
+     this.gender = this.ds.details.gender;
+    
+  }
 
 }

@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
        this.ds.login({email:this.valueemail, password:this.valuepassword}).subscribe((response)=>{
         //get the response and fill it in cookie and then fill the details object in data.service to make it available all the time to profile page and other pages. 
        localStorage.setItem("email", response.data.email);
-       this.ds.filldetails({FullName: response.data.FullName, email:response.data.email, password:"abcdefghijk"});
+       this.ds.filldetails({FullName: response.data.FullName, email:response.data.email, password:response.data.password, about:response.data.about, gender:response.data.gender});
        this.route.navigate(['/chat-dashboard']);
     })
   }
