@@ -16,7 +16,8 @@ export class DataService {
     this.details.FullName = data.FullName;
     this.details.email = data.email;
     this.details.password = data.password;
-    console.log(data);
+    this.details.about = data.about;
+    this.details.gender = data.gender;
   }
 
   
