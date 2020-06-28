@@ -40,6 +40,7 @@ ul {
 .chatbox-holder {
   position: fixed;
   /*bottom:20px;*/
+  z-index:11111;
   top:50%;
   left:50%;
   width:60%;
@@ -191,6 +192,7 @@ ul {
 
 .message-box {
   padding: 6px 10px;
+  overflow-y:hidden;
   border-radius: 6px 0 6px 0;
   position: relative;
   background: rgba(100, 170, 0, .1);
@@ -360,13 +362,18 @@ ul {
 }
 
 @media screen and (max-width:600px){
-    .chatbox-holder{
+    
+   .outerlayer{
+     height:100vh;
+   }
+  .chatbox-holder{
         width:100%;
         height:100vh;
         margin-bottom:0px;
         position:unset;
         transform: unset;
         overflow-x:hidden;
+        z-index:11111;
 
     }
     .chatbox{

@@ -17,6 +17,9 @@ import { ProfileComponent } from './profile/profile.component';
 import { ChatComponent } from './chat/chat.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MessageareaComponent } from './messagearea/messagearea.component';
+import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
+
+const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['websocket','polling']}};
 
 @NgModule({
   declarations: [
@@ -38,7 +41,8 @@ import { MessageareaComponent } from './messagearea/messagearea.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [],
   bootstrap: [AppComponent]

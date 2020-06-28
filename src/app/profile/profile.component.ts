@@ -20,6 +20,9 @@ export class ProfileComponent implements OnInit {
   constructor( private ds : DataService, private Httpc: HttpClient) { }
 
   ngOnInit(): void {
+
+     
+
     //get the profile pic address saved in the server 
      this.Httpc.get('http://localhost:8000/profile-picture/' + localStorage.getItem('email')).subscribe((res:any)=>{
        if(res.success == true){
@@ -32,14 +35,14 @@ export class ProfileComponent implements OnInit {
 
 
     //if details in ds is already filled that is the user has come to the proflepage after login then just get the details to be printed on the profile page
-    if(this.ds.details != undefined)
+    /*if(this.ds.details != undefined)
    { this.FullName = this.ds.details.FullName;
     this.email = this.ds.details.email;
     this.password = this.ds.details.password;
     this.about  = this.ds.details.about;
     this.gender = this.ds.details.gender;
    }
-   else{
+   else{*/
      //if details in ds is not filled already that is the user has not come directly from login page then get the email from local storage and get the details from database and save it in details
       if(localStorage.getItem('email')){
         this.Httpc.get('http://localhost:8000/get-details/'+localStorage.getItem('email')).subscribe((resp:any)=>{
@@ -54,7 +57,7 @@ export class ProfileComponent implements OnInit {
           }
         });
       }
-   }
+  // }
 
   }
   

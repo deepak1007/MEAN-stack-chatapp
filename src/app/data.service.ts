@@ -18,6 +18,30 @@ export class DataService {
     this.details.password = data.password;
     this.details.about = data.about;
     this.details.gender = data.gender;
+    this.details.public_id = data.public_id;
+  }
+
+
+  detailsFiller(){
+    //if details in ds is already filled that is the user has come to the proflepage after login then just get the details to be printed on the profile page
+    if(this.details != undefined)
+    { 
+      
+      return this.details;
+      
+    }
+    else{
+      //if details in ds is not filled already that is the user has not come directly from login page then get the email from local storage and get the details from database and save it in details
+       if(localStorage.getItem('email')){
+         this.httpclient.get('http://localhost:8000/get-details/'+localStorage.getItem('email')).subscribe((resp:any)=>{
+           if(resp.status == "200")
+           {
+             this.filldetails(resp.data);
+             return this.details;
+           }
+         });
+       }
+    }
   }
 
   
