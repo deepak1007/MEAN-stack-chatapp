@@ -60,6 +60,8 @@ export class ProfileComponent implements OnInit {
   // }
 
   }
+
+  
   
   changeGender(e){
     this.gender = e.target.options[e.target.selectedIndex].value;
@@ -85,6 +87,7 @@ export class ProfileComponent implements OnInit {
     console.log(data);
     this.Httpc.post("http://localhost:8000/save-details/"+ localStorage.getItem('email'),data).subscribe((res:any)=>{
       console.log(res);
+      alert("details has been saved");
     })
   }
   

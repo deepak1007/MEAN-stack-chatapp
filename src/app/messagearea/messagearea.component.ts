@@ -56,7 +56,11 @@ export class MessageareaComponent implements OnInit {
        headershowhide();
     }*/
   }
-
+   
+  ngOnDestroy(): void {
+    this.messageObserver.unsubscribe();
+    this.chatService.closeSocket();
+  }
 
   performExit(){
      this.messageObserver.unsubscribe();

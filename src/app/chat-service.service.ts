@@ -23,5 +23,9 @@ export class ChatServiceService {
      this.clientIO.emit('create-message',data);
   }
 
+  closeSocket(){
+    this.clientIO.disconnect();
+  }
+
 
 }
