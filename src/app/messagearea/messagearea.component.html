@@ -23,17 +23,16 @@
 
         <div class="message-box-holder" *ngFor="let message of messageList">
          
-          <div  *ngIf="message.from_id != getPublicId()">
-               <div class="message-sender">
+           
+               <div *ngIf="message.from_id != getPublicId()" class="message-sender">
                   {{message.details.name}}
                </div>
-               <div class="message-box message-partner">
+               <div *ngIf="message.from_id != getPublicId()" class="message-box message-partner">
 
                  <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up'></i>
                  {{message.details.message}}
                  
                </div>
-          </div>
 
           <div *ngIf="message.from_id == getPublicId()">
               <div class="message-box">
