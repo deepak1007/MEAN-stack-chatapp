@@ -34,14 +34,13 @@
                  
                </div>
 
-          <div *ngIf="message.from_id == getPublicId()">
-              <div class="message-box">
+              <div *ngIf="message.from_id == getPublicId()" (load)="scrollToBottom()" class="message-box bg-dark text-white">
 
                 <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up'></i>
                 {{message.details.message}}
 
               </div>
-          </div>
+             <span *ngIf='scrollToBottom()'></span>
          
         </div>
 
@@ -50,7 +49,7 @@
       </div>
       
       <div class="chat-input-holder">
-        <textarea class="chat-input" [(ngModel)]="createMessage" placeholder="enter message here... "></textarea>
+        <textarea class="chat-input" [(ngModel)]="createMessage" (keypress)="checkIfEnter($event)" placeholder="enter message here... "></textarea>
         <input type="submit" value="Send" class="message-send" (click)="sendMessage()"/>
       </div>
       <div class="attachment-panel">

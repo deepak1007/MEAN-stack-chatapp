@@ -87,20 +87,29 @@ app.use(cors());
 
 
 //socket---------------------------------------------->
+//let rooms  = {}; room lists room_name : members
 let userCount = 0;
 io.on('connection',(client)=>{
      userCount++;
     console.log("user connected " + userCount);
+    
+    client.on('join-room', (room_name)=>{//client sends request to join perticular room (room_name)
+        //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
+       // client.join(room_name);
+        //client.currentRoom = room_name; //new property to client socket that tells current room
+        client.emit('uniqueIdReceive', {unique_id : client.id}); //sending unique client id.
+    });
 
 
     client.on("create-message",(data)=>{
-        
-        io.emit("new-message", JSON.stringify(data));
-
+        data['from_id'] = client.id; //inserts the message's form_id in the incoming data.
+         io.sockets.emit("new-message", JSON.stringify(data));
+        //io.sockets.in(client.currentRoom).emit("new-message", JSON.stringify(data));
     });
 
+    
     client.on("disconnect", ()=>{
-        console.log('user disconnected');
+        console.log('user disconnected, client_id :' + client.id);
         userCount--;
     })
 })
@@ -121,10 +130,10 @@ app.post('/login', bodyParser.json(), (req, res)=>{
             console.log(data);
             console.log(data.length);
             var  fullname =  data[0].firstname + data[0].lastname;
-            res.status(200).send({status:"ok", data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender, auth:1}}); 
+            res.send({status:true, data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender, auth:1}}); 
         }
         else{
-            res.status(404).send({status:"not ok",data:{err:"couldn't find any data sorry!"}});
+            res.send({status:false,data:{err:"couldn't find any data sorry!"}});
         }
     })
     
@@ -150,7 +159,7 @@ app.get('/get-details/:email', (req, res)=>{
     collection.find({email:req.params['email']}).toArray((err,data)=>{
        if(!err && data.length>0){
            var fullname = data[0].firstname + " " + data[0].lastname;
-           res.send({status:"200" , data:{FullName:fullname , email:data[0].email, password: data[0].password, about:data[0].about||"", gender:data[0].gender||'', public_id: data[0]._id}});
+           res.send({status:"200" , data:{FullName:fullname , email:data[0].email, password: data[0].password, about:data[0].about||"", gender:data[0].gender||''}});
        }
        else{
            res.status(404).send({status:"404", data:{errMsg: "sorry no data found"}});

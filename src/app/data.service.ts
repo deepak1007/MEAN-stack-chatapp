@@ -18,7 +18,6 @@ export class DataService {
     this.details.password = data.password;
     this.details.about = data.about;
     this.details.gender = data.gender;
-    this.details.public_id = data.public_id;
   }
 
 

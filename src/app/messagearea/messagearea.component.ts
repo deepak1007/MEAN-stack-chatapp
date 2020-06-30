@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ChatServiceService } from '../chat-service.service';
 import { DataService } from '../data.service';
 import { HttpClient } from "@angular/common/http";
+import { analyzeAndValidateNgModules } from '@angular/compiler';
 
 @Component({
   selector: 'app-messagearea',
@@ -19,18 +20,25 @@ export class MessageareaComponent implements OnInit {
   FullName;
 
 
+
   constructor(private router:Router,private ds:DataService,private Httpc:HttpClient,  private chatService: ChatServiceService) { }
 
   ngOnInit(): void {
+    
+
+    this.chatService.openConnection();
+    
+    this.chatService.join_room("cricket");
      
     this.messageObserver =  this.chatService.getMessages()
               .subscribe((newIncomingMessage)=>{
-                       this.messageList.push(JSON.parse(newIncomingMessage));;
+                       this.messageList.push(JSON.parse(newIncomingMessage));
+                     
+                       
                });
-    
-               
+            
     this.ds.detailsFiller(); //in file data.service.ts for filling the details object so that we can use the all the informations here
-
+    
     function headershowhide(){
       //if computer view then show side nav and header but for mobile view hide both...
       if(1){
@@ -55,6 +63,7 @@ export class MessageareaComponent implements OnInit {
  /*   window.onresize = function(){
        headershowhide();
     }*/
+    
   }
    
   ngOnDestroy(): void {
@@ -63,8 +72,7 @@ export class MessageareaComponent implements OnInit {
   }
 
   performExit(){
-     this.messageObserver.unsubscribe();
-
+    this.messageObserver.unsubscribe();
     var header;
     header = <HTMLElement><any> document.getElementsByClassName('header')[0];
     header.style.display =  "block";
@@ -75,22 +83,39 @@ export class MessageareaComponent implements OnInit {
   }
 
   getPublicId(){
-    return this.ds.details.public_id;
+    return localStorage.getItem('uniqueChatId');//check whether the message belongs to self or to others
   }
 
-
+  scrollToBottom(){
+       var chat_messages = <HTMLElement><any>document.getElementsByClassName('chat-messages')[0];
+       chat_messages.scrollTop = chat_messages.scrollHeight;
+       //chat_messages.scrollTop = chat_messages.scrollHeight - chat_messages.clientHeight;
+       return false;
+  }
 
   //chat function call from the chat services----------------------->
 
-   sendMessage(){
+  checkIfEnter(e){
+    var e = e || window.event;
+    var charcode = e.keyCode || e.which;
     
-     this.chatService.sendMessage({from_id:this.ds.details.public_id, details:{name:this.ds.details.FullName, message:this.createMessage, react:{like:0}}});
-     this.createMessage= '';
+    if(charcode == 13){
+      e.preventDefault();
+      this.sendMessage();
+    }else{
+    }
+  }
+
+   sendMessage(){
+     if(this.createMessage != ""){
+      this.chatService.sendMessage({from_id:"anonymous", details:{name:this.ds.details.FullName, message:this.createMessage, react:{like:0}}});
+      this.createMessage= '';
+     } 
    }
 
    sendLike(e){
      e.preventDefault();
-     this.chatService.sendMessage({from_id:this.ds.details.public_id, details:{name:this.ds.details.FullName, message:"", react:{like:1}}})
+     this.chatService.sendMessage({from_id:"anonymous", details:{name:this.ds.details.FullName, message:"", react:{like:1}}});
    }
 
 }

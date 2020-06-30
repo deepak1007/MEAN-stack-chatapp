@@ -65,7 +65,11 @@ input.ng-invalid{
     position:relative;
     
 }
-
+/*.form-label:focus, .form-control:active, .form-group:focus{
+    outline:none !important;
+    border:none;
+    box-shadow: unset;
+}*/
 @media screen and (max-width:600px){
     .login-form-container{
         width:90%;

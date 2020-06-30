@@ -80,6 +80,9 @@ input.ng-invalid{
     height:100%;
     
 }
+/*.form-control:focus{
+    outline:none !important;
+}*/
 
 @media screen and (max-width:600px){
     .picturebox .img{
@@ -103,4 +106,6 @@ input.ng-invalid{
         width:100%;
         padding:20px 10px;
     }
+
+    
 }
