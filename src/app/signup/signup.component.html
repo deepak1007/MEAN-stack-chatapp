@@ -11,7 +11,7 @@
 
         <div class="col-md-6 order-1 order-md-2 signup-box">
             <div class="signup-form-container">
-                <h2 class='text-center py-1'><small>Make Your Account</small></h2>
+                <h2 class='text-center py-1 my-3'><small>Make Your Account</small></h2>
 
                 <form #signupform="ngForm" class='form' (ngSubmit)='onSignup()'>
 
@@ -43,7 +43,7 @@
                         <span *ngIf="confirmPassword.touched && password.value != confirmPassword.value" class='error'> *password did not match </span>
                     </div>
                 
-                   <button type='submit' [disabled]='signupform.invalid' class='btn btn-dark text-white py-md-2 px-lg-5 px-2'>signup</button>
+                   <button type='submit' [disabled]='signupform.invalid || password.value != confirmPassword.value' class='btn btn-dark text-white my-3 py-md-2 px-lg-5 px-2'>signup</button>
                 </form>
             </div>
         </div>

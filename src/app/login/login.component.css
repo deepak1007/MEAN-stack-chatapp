@@ -27,13 +27,16 @@ input.ng-invalid{
 
 .login-form-container{
     
-    width:70%;
+    width:80%;
     text-align:center;
     padding:40px 30px;
     background:white;
-
-
+    border-radius: 10px;
+    box-shadow: 5px 5px 9px rgba(0,0,0,0.1);
+    transform: scale(0.98);
 }
+
+
 .form-label{
     padding:0px;
 }
@@ -41,7 +44,9 @@ input.ng-invalid{
     margin:0px;
     padding:0px;
 }
-
+.heading{
+    letter-spacing: 2px ;
+}
 .picturebox{
     height:100%;
     padding:0;
@@ -70,6 +75,15 @@ input.ng-invalid{
     border:none;
     box-shadow: unset;
 }*/
+input {
+    padding:3px 10px;
+    font-size:19px;
+    letter-spacing:1px;
+}
+button{
+    letter-spacing: 4px;
+    font-size:18px;
+}
 @media screen and (max-width:600px){
     .login-form-container{
         width:90%;

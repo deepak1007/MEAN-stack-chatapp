@@ -29,7 +29,7 @@
                <div class="details">
                    <form action="">
                        <div class="form-group">
-                           <label for="fullname" class='form-label'> <input type="text" class='form-control' name='fullName' [(ngModel)]="FullName"></label>
+                           <label for="fullname" class='form-label'> <input type="text" class='form-control' name='fullName' placeholder="change name" [(ngModel)]="FullName"></label>
                        </div>
                        
                        <div class="form-group">
@@ -37,11 +37,11 @@
                        </div>
 
                        <div class="form-group">
-                        <label for="pasword" class='form-label'> <input type="password" class='form-control' name='password' [(ngModel)]="password"> </label>
+                        <label for="pasword" class='form-label'> <input type="password" placeholder="new password" class='form-control' name='password' [(ngModel)]="password"> </label>
                        </div>
                        
                         <div class="form-group">
-                            <label for="about" class='form-label'><textarea name="about" id="about" cols="30" rows="3" class='form-control' [(ngModel)]="about"></textarea></label>
+                            <label for="about" class='form-label'><textarea name="about" id="about" cols="30" rows="3" class='form-control' placeholder="Enter something about your self" [(ngModel)]="about"></textarea></label>
                         </div>
 
                        <div class="form-group">
@@ -55,7 +55,7 @@
                    </form>
                    <div class="buttons text-center mb-5">
                     <div class="btn btn-cancel border-danger py-2 px-3 my-3" (click)="cancelChanges()">cancel</div>
-                    <div class="btn btn-save btn-primary py-2 px-4 ml-2 my-3" (click)="savedetails()"><span>Save</span></div>
+                    <div class="btn btn-save btn-dark py-2 px-4 ml-2 my-3" (click)="savedetails()"><span>Save</span></div>
                    </div>
 
                </div>

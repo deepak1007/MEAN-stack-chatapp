@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-md-6 login-box">
             <div class="login-form-container">
-                <h2 class='text-center'><small>Login Please!</small></h2>
+                <h2 class='text-center heading'><small>Login Please!</small></h2>
                 <form #loginform="ngForm" class='form' (ngSubmit)='onLogin()'>
     
                     <div class="form-group">
@@ -14,9 +14,8 @@
                 
                     <div class="form-group">
                         <label for="password" class='form-label'></label>
-                        <input type="password" class='form-control' required  #password="ngModel" placeholder="enter Password" minlength="8" maxlength="15" 
-                         name="password" [(ngModel)]='valuepassword' ngModel>
-                        <span *ngIf="password.invalid && password.touched" class='error'> *Please enter password between 8 to 15 characters</span>
+                        <input type="password" class='form-control' required  #password="ngModel" placeholder="enter Password"  name="password" [(ngModel)]='valuepassword' ngModel>
+                        <span *ngIf="password.invalid && password.touched" class='error'> *Please enter password </span>
                     </div>
                 
                    <button type='submit' [disabled]='loginform.invalid' class='btn btn-dark text-white mt-3 py-md-2 px-lg-5 px-4'>Login</button>

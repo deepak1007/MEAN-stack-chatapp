@@ -14,12 +14,12 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     
        
-   if(1)
+   if(localStorage.getItem('email'))
    {
-     return true;
+      return true;
    }else{
      alert("please login first");
-    this.router.navigate(['/login']);
+     this.router.navigate(['/login']);
      return false;
    }
 
