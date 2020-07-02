@@ -89,14 +89,17 @@ app.use(cors());
 //socket---------------------------------------------->
 //let rooms  = {}; room lists room_name : members
 let userCount = 0;
+let id_to_email = {};
 io.on('connection',(client)=>{
      userCount++;
     console.log("user connected " + userCount);
     
-    client.on('join-room', (room_name)=>{//client sends request to join perticular room (room_name)
+    client.on('join-room', (email)=>{//client sends request to join perticular room (room_name)
         //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
        // client.join(room_name);
         //client.currentRoom = room_name; //new property to client socket that tells current room
+        id_to_email[client.id] = email;
+        console.log(id_to_email);
         client.emit('uniqueIdReceive', {unique_id : client.id}); //sending unique client id.
     });
 
@@ -110,6 +113,7 @@ io.on('connection',(client)=>{
     
     client.on("disconnect", ()=>{
         console.log('user disconnected, client_id :' + client.id);
+        //delete id_to_email[client.id];
         userCount--;
     })
 })
@@ -217,4 +221,18 @@ app.get("/profile-picture/:email", bodyParser.json(), (req, res)=>{
              res.send({success:true, proPic_src: data[0].proPic}); 
          }
      })
+});
+
+app.get("/view-profile/:id", bodyParser.json(), (req,res)=>{
+    var collection = connectedObj.db(Dbname).collection('users');
+    var email = id_to_email[req.params['id']];
+    collection.find({email:email}).toArray((err,data)=>{
+        if(!err && data.length>0){
+            var fullname = data[0].firstname + " " + data[0].lastname;
+            res.send({status:true , data:{FullName:fullname ,about:data[0].about||"", gender:data[0].gender||'', proPic_src:  data[0].proPic}});
+        }
+        else{
+            res.status(404).send({status:false, data:{errMsg: "sorry no data found"}});
+        }
+     });
 })
