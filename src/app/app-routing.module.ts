@@ -10,6 +10,7 @@ import { ChatComponent } from './chat/chat.component';
 import { AuthGuard } from './auth.guard';
 import { MessageareaComponent } from './messagearea/messagearea.component';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
+import { ContactUsComponent } from './contact-us/contact-us.component';
 
 
 const routes: Routes = [
@@ -17,7 +18,8 @@ const routes: Routes = [
   {path:'', component:NormalpagesComponent, children:[
     {path:'', component:HomeComponent},
     {path:'login', component:LoginComponent},
-    {path:'sign-up', component:SignupComponent}
+    {path:'sign-up', component:SignupComponent},
+    {path:'contact-us', component:ContactUsComponent}
   ]},
 
    {path:'home',redirectTo:'',  component:HomeComponent},

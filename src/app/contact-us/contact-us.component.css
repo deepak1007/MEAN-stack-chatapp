@@ -1,0 +1,48 @@
+*{
+    box-sizing: border-box;
+}
+
+.form-container{
+    width:60%;
+    margin: 20px auto;
+   
+}
+.error {
+    color:red;
+    
+}
+input.ng-valid{
+    border-left:2px solid green;    
+  }
+  
+  input.ng-invalid{
+      border-left:2px solid red;
+  }
+
+
+.form-control{
+    letter-spacing: 1px;
+    font-size:15px;
+    padding:3px 10px;
+}
+.form-label{
+    letter-spacing: 2px ;
+    font-size:18px;
+}
+h2{
+    letter-spacing: 2px;
+}
+
+.send-btn {
+    letter-spacing: 1px;
+}
+
+@media screen and (max-width:600px){
+    .form-container{
+        width:90%;
+    }
+    h2{
+        margin-top:70px;
+        
+    }
+}

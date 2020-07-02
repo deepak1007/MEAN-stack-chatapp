@@ -146,16 +146,23 @@ app.post('/login', bodyParser.json(), (req, res)=>{
 
 app.post('/sign-up', bodyParser.json(), (req, res)=>{
     var collection = connectedObj.db(Dbname).collection("users");
-    collection.insertOne(req.body,(err, data)=>{
-        if(!err){
-            res.status(201).send({status:"ok", data:{name:req.body.firstname, email: req.body.email}});
+    collection.find({email:req.body.email}).toArray((err,data)=>{
+        if(!err && data.length==0){
+            collection.insertOne(req.body,(err, data)=>{
+                if(!err){
+                    res.status(201).send({status:true, data:{name:req.body.firstname, email: req.body.email}});
+                }
+                else{
+                    console.log("ghhh");
+                    res.status(204).send({status:false, data:{err:"sorry an error occured wile signing in"}})
+                }
+            });
+        }else{
+            res.send({status:false, data:{err:"An account with this email is already present"}});
         }
-        else{
-            console.log("ghhh");
-            res.status(204).send({status:"not ok", data:{err:"sorry an error occured wile signing in"}})
-        }
-    })
-})
+    });
+
+});
 
 
 app.get('/get-details/:email', (req, res)=>{
@@ -235,4 +242,15 @@ app.get("/view-profile/:id", bodyParser.json(), (req,res)=>{
             res.status(404).send({status:false, data:{errMsg: "sorry no data found"}});
         }
      });
+});
+
+app.post("/query", bodyParser.json(), (req,res)=>{
+    var collection = connectedObj.db(Dbname).collection('queries');
+    collection.insertOne(req.body,(err,data)=>{
+        if(!err){
+            res.send({status:true});
+        }else{
+            res.send({status:false});
+        }
+    })
 })
