@@ -9,6 +9,8 @@ export class AppComponent {
   title = 'chatapp';
 
   ngOnInit(): void {
+    var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
+    spinner.style.display = 'block';
     
 
     window.onresize= function(){
@@ -32,6 +34,8 @@ export class AppComponent {
       }
     
     }
+    spinner.style.display = "none";
   }
   
+
 }

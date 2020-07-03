@@ -42,6 +42,7 @@
     box-sizing: border-box;
 }
 
+
 @media screen and (min-width:600px){
 .container-fluid {
     height:100%;
@@ -58,6 +59,12 @@
 
 .text h3{
     overflow-y:hidden;
+    font-size:35px;
+    margin-bottom:10px;
+    letter-spacing: 2px ;
+}
+.text p{
+    letter-spacing:1px;
 }
 .outer {
     width:100%;
@@ -200,6 +207,14 @@
 }
 .text h3{
     overflow:hidden;
+}
+.text h3{
+    overflow-y:hidden;
+    letter-spacing: 1px ;
+    margin-bottom:20px;
+}
+.text p{
+    letter-spacing:1px;
 }
 .inner .flexed-element-container .pic{
     display:block;

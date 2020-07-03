@@ -26,16 +26,16 @@
                <div *ngIf="message.from_id != getPublicId()"  class="message-sender">
                   <span (click)='viewProfile(message.from_id)'>{{message.details.name}}</span>
                </div>
-               <div *ngIf="message.from_id != getPublicId()" class="message-box message-partner">
+               <div *ngIf="message.from_id != getPublicId()" class="message-box message-partner ld ld-throw-btt-in" style='animation-duration: 0.5s;'>
 
-                 <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up'></i>
+                 <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up ld ld-zoom-in' style="animation-duration: 1s;"></i>
                  {{message.details.message}}
                  
                </div>
 
               <div *ngIf="message.from_id == getPublicId()" (load)="scrollToBottom()" class="message-box bg-dark text-white">
 
-                <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up'></i>
+                <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up ld ld-zoom-in' style='animation-duration: 1s;'></i>
                 {{message.details.message}}
 
               </div>
@@ -52,10 +52,10 @@
         <input type="submit" value="Send" class="message-send" (click)="sendMessage()"/>
       </div>
       <div class="attachment-panel">
-        <a href="#" class="fa fa-thumbs-up" (click)='sendLike($event)'></a>
+        <a href="#" class="fa fa-thumbs-up ld ld-zoom-in" (click)='sendLike($event)'></a>
         <!--<a href="#" class="fa fa-camera"></a>
         <a href="#" class="fa fa-video-camera"></a>-->
-        <a href="#" class="fa fa-image"></a>
+        <a href="#" class="fa fa-image ld ld-zoom-in"></a>
         <!--<a href="#" class="fa fa-paperclip"></a>
         <a href="#" class="fa fa-link"></a>
         <a href="#" class="fa fa-trash-o"></a>

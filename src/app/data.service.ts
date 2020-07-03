@@ -52,6 +52,18 @@ export class DataService {
   signup(data):any{
     return this.httpclient.post('http://localhost:8000/sign-up', data);
   }
+  
+  spinnerControl(display):void{
+    var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
+    
+    if(display == "show"){
+       spinner.style.display = "block";
+    }else{
+      spinner.style.display = "none";
+    }
+    
+  }
+  
 
   authenticationCheck():Boolean{
     if(localStorage.getItem('email')){

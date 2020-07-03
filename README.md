@@ -29,3 +29,9 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## things to work on
 carousel in home tutorial: https://www.w3schools.com/bootstrap4/bootstrap_ref_js_carousel.asp
 navigation: correct navigation bug.
+
+
+
+## Incase you get modules not found error :
+-> remove all the module address from angular.json build styles and scripts.
+-> remove the comments from index.html file.

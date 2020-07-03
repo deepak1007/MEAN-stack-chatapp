@@ -11,10 +11,15 @@ export class ChatComponent implements OnInit {
   constructor(private router : Router) { }
 
   ngOnInit(): void {
+   
+
   }
 
   goToMessageArea(){
+    var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
+    spinner.style.display = "block";
     this.router.navigate(['/chat-dashboard/message-area']);
+    spinner.style.display  = "none";
   }
 
 }

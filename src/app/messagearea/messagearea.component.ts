@@ -24,7 +24,8 @@ export class MessageareaComponent implements OnInit {
   constructor(private router:Router,private ds:DataService,private Httpc:HttpClient,  private chatService: ChatServiceService) { }
 
   ngOnInit(): void {
-    
+
+    this.ds.spinnerControl('show');
 
     this.chatService.openConnection();
     
@@ -33,8 +34,7 @@ export class MessageareaComponent implements OnInit {
     this.messageObserver =  this.chatService.getMessages()
               .subscribe((newIncomingMessage)=>{
                        this.messageList.push(JSON.parse(newIncomingMessage));
-                     
-                       
+   
                });
             
     this.ds.detailsFiller(); //in file data.service.ts for filling the details object so that we can use the all the informations here
@@ -64,9 +64,13 @@ export class MessageareaComponent implements OnInit {
        headershowhide();
     }*/
     
+   this.ds.spinnerControl('hide');
   }
    
   ngOnDestroy(): void {
+    var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
+    spinner.style.display = "block";
+
     this.messageObserver.unsubscribe();
     this.chatService.closeSocket();
     var header;
@@ -75,6 +79,8 @@ export class MessageareaComponent implements OnInit {
     var chat_side_nav;
     chat_side_nav  = <HTMLElement><any> document.getElementsByClassName('chatzonesidenav')[0];
     chat_side_nav.style.display = "flex";
+
+    spinner.style.display = "none";
   }
 
   performExit(){

@@ -10,6 +10,26 @@
     overflow-y: hidden;
 }
 
+.show-spinner{
+    background: rgba(0,0,0, 0.6);
+    position:fixed;
+    width:100vw;
+    height:100vh;
+    left:0%;
+    top:0%;
+    z-index:11111;
+}
+.chat-spinner{
+    width:100px;
+    height:100px;
+    position:fixed;
+    left:50%;
+    top:50%;
+    z-index:9999;
+    transform:translate(-50%, -50%);
+}
+
+
 @media screen and (max-width:600px){
       
     .main-screen{

@@ -44,7 +44,7 @@
                             <label for="about" class='form-label'><textarea name="about" id="about" cols="30" rows="3" class='form-control' placeholder="Enter something about your self" [(ngModel)]="about"></textarea></label>
                         </div>
 
-                       <div class="form-group">
+                       <div class="form-group" >
                         <select name="gender"  (change)="changeGender($event)" class='form-control'>
                             <option value="" [selected]="(gender=='')">Select Gender</option>
                             <option value="male" [selected]="(gender=='male')">Male</option>
@@ -60,7 +60,6 @@
 
                </div>
                <!--end details -->
-
             </div>
  
         </div>
