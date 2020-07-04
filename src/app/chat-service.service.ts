@@ -23,14 +23,23 @@ export class ChatServiceService {
             });
     });
   }
+
+  public getMembers =()=>{
+    return Observable.create((observer) => {
+      this.clientIO.on('new-member', (members) => {
+          observer.next(members);
+      });
+});
+  }
   
   public join_room = (room_name) =>{
-    this.clientIO.emit('join-room', room_name);
+    this.clientIO.emit('join-room', {room_name:room_name, email:localStorage.getItem('email')});
     this.clientIO.on('uniqueIdReceive', (unique_id)=>{//takes the unique id of the socket fills it in local storage.
        localStorage.setItem('uniqueChatId', unique_id.unique_id);//unique id for identification of message belongingness.
     })
   }
 
+  
   
 
   public sendMessage = (data:Object)=>{

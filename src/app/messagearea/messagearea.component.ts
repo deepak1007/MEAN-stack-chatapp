@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute } from '@angular/router';
 import { ChatServiceService } from '../chat-service.service';
 import { DataService } from '../data.service';
 import { HttpClient } from "@angular/common/http";
+
 import { analyzeAndValidateNgModules } from '@angular/compiler';
 
 @Component({
@@ -14,28 +15,57 @@ export class MessageareaComponent implements OnInit {
   createMessage:string;
   messageList = [];
   messageObserver;
+
+  chat_name;
+  mod;
+  roomCode;
+  roomPassword;
+  roomDescription;
+  roomCategory;
+  roomPrivacy;
+  roomPic;
+  roomMembers
   group=1;
+
+  membersObserver;
 
 
   FullName;
 
 
 
-  constructor(private router:Router,private ds:DataService,private Httpc:HttpClient,  private chatService: ChatServiceService) { }
+  constructor(private router:Router, private ar:ActivatedRoute, private ds:DataService,private Httpc:HttpClient,  private chatService: ChatServiceService) { }
 
   ngOnInit(): void {
 
     this.ds.spinnerControl('show');
-
+    
     this.chatService.openConnection();
     
-    this.chatService.join_room(localStorage.getItem('email'));
+    
+    this.ar.queryParamMap.subscribe((data:any)=>{
+      this.roomDescription = data.get('description');
+      this.roomCategory = data.get('category');
+      this.roomPassword = data.get('password');
+      this.chat_name = data.get('roomName');
+      this.mod = data.get('createdBy');
+      this.roomPrivacy = data.get('type');
+      this.roomCode = data.get('roomCode');
+      this.roomPic = data.get('roomPic');
+      this.roomMembers = data.get('roomMembers');
+      this.chatService.join_room(this.roomCode);
+      this.ds.spinnerControl('hide');
+    })
      
     this.messageObserver =  this.chatService.getMessages()
               .subscribe((newIncomingMessage)=>{
                        this.messageList.push(JSON.parse(newIncomingMessage));
    
                });
+
+    this.membersObserver = this.chatService.getMembers().subscribe((members)=>{
+      this.roomMembers = members;
+    })
             
     this.ds.detailsFiller(); //in file data.service.ts for filling the details object so that we can use the all the informations here
     
@@ -63,8 +93,9 @@ export class MessageareaComponent implements OnInit {
  /*   window.onresize = function(){
        headershowhide();
     }*/
+
+   
     
-   this.ds.spinnerControl('hide');
   }
    
   ngOnDestroy(): void {
@@ -72,6 +103,7 @@ export class MessageareaComponent implements OnInit {
     spinner.style.display = "block";
 
     this.messageObserver.unsubscribe();
+    this.membersObserver.unsubscribe();
     this.chatService.closeSocket();
     var header;
     header = <HTMLElement><any> document.getElementsByClassName('header')[0];
@@ -108,7 +140,10 @@ export class MessageareaComponent implements OnInit {
   viewProfile(id){
     this.router.navigate(['/chat-dashboard/view-profile'], {queryParams: {id : id}});
   }
+  
+  showGroupMenu(){
 
+  }
   //chat function call from the chat services----------------------->
 
   checkIfEnter(e){
@@ -124,7 +159,7 @@ export class MessageareaComponent implements OnInit {
 
    sendMessage(){
      if(this.createMessage != ""){
-      this.chatService.sendMessage({from_id:"anonymous", details:{name:this.ds.details.FullName, message:this.createMessage, react:{like:0}}});
+      this.chatService.sendMessage({from_id:"anonymous", details:{name:this.ds.details.FullName, message:this.createMessage, react:{like:0}}});//from id is anonymous .. it will be filled at the server side.
       this.createMessage= '';
      } 
    }

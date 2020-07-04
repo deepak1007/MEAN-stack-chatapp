@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { viewClassName } from '@angular/compiler';
 
 @Component({
   selector: 'app-chat',
@@ -8,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class ChatComponent implements OnInit {
 
-  constructor(private router : Router) { }
+  constructor(private router : Router, private httpc:HttpClient) { }
 
   ngOnInit(): void {
    
@@ -18,8 +20,30 @@ export class ChatComponent implements OnInit {
   goToMessageArea(){
     var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
     spinner.style.display = "block";
-    this.router.navigate(['/chat-dashboard/message-area']);
+
+    this.httpc.get('http://localhost:8000/room-by-code/XyzaBc1Kzsxsw3').subscribe((res:any)=>{
+      if(res.status == true){
+       
+        this.router.navigate(['/chat-dashboard/message-area'],{queryParams:res.data});
+        spinner.style.display = "none";
+      }
+    })
+    
+
+    
+  }
+  
+  goToCreateRoom(){
+    var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
+    spinner.style.display = "block";
+    this.router.navigate(['/chat-dashboard/create-room']);
     spinner.style.display  = "none";
   }
 
+  goToSearchRoom(){
+    var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
+    spinner.style.display = "block";
+    this.router.navigate(['/chat-dashboard/search-room']);
+    spinner.style.display  = "none";
+  }
 }

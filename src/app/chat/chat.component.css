@@ -12,7 +12,7 @@
     top:50%;
     left:50%;
     transform:translate(-50%, -50%);
-    height:80%;
+    height:100%;
 }
 
 .join-group {
@@ -66,6 +66,14 @@ h3 {
     color:white;
 }
 
+.make-room:hover .text p {
+    
+    background:peru !important;
+}
+
+.enter-room:hover .text p{
+    background: blueviolet !important;
+}
 
 @media screen and (max-width:600px){
     

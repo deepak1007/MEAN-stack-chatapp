@@ -20,6 +20,8 @@ import { MessageareaComponent } from './messagearea/messagearea.component';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
+import { CreateroomComponent } from './createroom/createroom.component';
+import { SearchroomsComponent } from './searchrooms/searchrooms.component';
 
 
 const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['websocket','polling']}};
@@ -40,7 +42,9 @@ const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['webso
     ChatComponent,
     MessageareaComponent,
     ViewProfileComponent,
-    ContactUsComponent
+    ContactUsComponent,
+    CreateroomComponent,
+    SearchroomsComponent
   ],
   imports: [
     BrowserModule,

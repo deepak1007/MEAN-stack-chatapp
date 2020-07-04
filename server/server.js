@@ -10,7 +10,7 @@ const soc = require('socket.io');
 
 const app = express();
 const Dbname = "ChatAppDB";
-const DIR = './server/upload';
+let DIR = './server/upload';
 let connectedObj;
 
 const server = app.listen(8000, () => {
@@ -38,7 +38,15 @@ const io = soc.listen(server);
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, DIR);
+        try{
+            if(req.params.type == "room"){
+                DIR = './server/upload/room_pictures';
+            }
+            cb(null, DIR);
+        }catch{
+            cb(null, DIR);
+        }
+     
     },
     filename: (req, file, cb) => {
       cb(null, file.fieldname + '-' + Date.now() + "-"+  file.originalname.split('@')[0] + '.' + "jpg");
@@ -87,33 +95,39 @@ app.use(cors());
 
 
 //socket---------------------------------------------->
-//let rooms  = {}; room lists room_name : members
+var univarsal = {roomName: "General", createdBy: "", description:"Random Group for Everyone", category:"general", type:"public", password:"",roomPic:'../../assets/icons/Infinity-1.9s-221px.png', roomCode:"XyzaBc1Kzsxsw3", roomLink:'http://localhost:4200/chat-dashboard/message-area', roomMembers:0};
+
+let rooms  = {"XyzaBc1Kzsxsw3" : univarsal}; //room lists room_name : members
 let userCount = 0;
 let id_to_email = {};
 io.on('connection',(client)=>{
-     userCount++;
-    console.log("user connected " + userCount);
+     userCount++; 
+    console.log("user connected " + userCount);  
     
-    client.on('join-room', (email)=>{//client sends request to join perticular room (room_name)
+    client.on('join-room', (data)=>{//client sends request to join perticular room (room_name)
         //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
-       // client.join(room_name);
-        //client.currentRoom = room_name; //new property to client socket that tells current room
-        id_to_email[client.id] = email;
-        console.log(id_to_email);
+        client.join(data.room_name);
+        client.currentRoom = data.room_name; //new property to client socket that tells current room
+        //id_to_email[client.id] = data.email; //didn't find use till now.
+        console.log(rooms); 
+        rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers + 1;
         client.emit('uniqueIdReceive', {unique_id : client.id}); //sending unique client id.
+        io.sockets.in(client.currentRoom).emit('new-member',rooms[client.currentRoom].roomMembers);
     });
 
 
     client.on("create-message",(data)=>{
-        data['from_id'] = client.id; //inserts the message's form_id in the incoming data.
-         io.sockets.emit("new-message", JSON.stringify(data));
-        //io.sockets.in(client.currentRoom).emit("new-message", JSON.stringify(data));
+         data['from_id'] = client.id; //inserts the message's form_id in the incoming data.
+        // io.sockets.emit("new-message", JSON.stringify(data));
+         io.sockets.in(client.currentRoom).emit("new-message", JSON.stringify(data));
     });
 
     
     client.on("disconnect", ()=>{
         console.log('user disconnected, client_id :' + client.id);
-        //delete id_to_email[client.id];
+        rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers - 1;
+        io.sockets.in(client.currentRoom).emit('new-member',rooms[client.currentRoom].roomMembers);
+        //delete id_to_email[client.id]; 
         userCount--;
     })
 })
@@ -180,7 +194,7 @@ app.get('/get-details/:email', (req, res)=>{
 
 app.post('/save-details/:email', bodyParser.json(), (req, res)=>{
     var collection = connectedObj.db(Dbname).collection("users");
-    collection.updateOne({email:req.params['email']}, {$set:{password:req.body.password,about:req.body.about, gender:req.body.gender}}, (err, data)=>{
+    collection.updateOne({email:req.params['email']}, {$set:{firstname:req.body.firstName, lastname:req.body.lastName,password:req.body.password,about:req.body.about, gender:req.body.gender}}, (err, data)=>{
         if(!err){
             res.send({success:true});
         }else{
@@ -190,7 +204,7 @@ app.post('/save-details/:email', bodyParser.json(), (req, res)=>{
 })
 
 
-app.post("/upload-profile-picture/:email", upload.single('profilePic'), (req, res)=>{
+app.post("/upload-profile-picture/:email", upload.single('profilePic',), (req, res)=>{
     if (!req.file) {
         console.log("Your request doesn’t have any file");
         return res.send({
@@ -253,4 +267,82 @@ app.post("/query", bodyParser.json(), (req,res)=>{
             res.send({status:false});
         }
     })
+});
+
+app.post("/create-room", bodyParser.json(), (req, res)=>{
+    var collection = connectedObj.db(Dbname).collection('users');
+    collection.find({email:req.body.creator}).toArray((err,data)=>{
+        if(!err && data.length > 0){
+            var fullname = data[0].firstname + " " + data[0].lastname;
+            var roomCode = fullname + req.body.roomName;
+            rooms[roomCode] = {roomName: req.body.roomName, createdBy: fullname, description:req.body.roomDescription, category:req.body.roomCategory, type:req.body.roomPrivacy, password:req.body.roomPassword,roomPic:req.body.roomPic, roomCode:roomCode, roomLink:'http://localhost:4200/chat-dashboard/message-area', roomMembers:0};
+            res.send({status:true, data:rooms[roomCode]});
+        }else{
+            res.send({status:false});
+        } 
+    })
+});
+
+app.post('/get-available-rooms', bodyParser.json(), (req, res)=>{
+    var data = [];
+    if(req.body.all == 1){
+        for(var room_code in rooms){
+            data.push(rooms[room_code]);
+            
+        }
+    if(data[0] == ""){
+       res.send({status:false});
+    } else{
+        res.send({status:true, data: data});
+    }
+   
+        
+        
+    }else{
+       if(req.body.withCode == 1){
+        
+            if(rooms.hasOwnProperty(req.body.roomCode)){
+            data.push(rooms[req.body.roomCode]);
+            console.log(rooms[req.body.roomCode]);
+            res.send({status:true, data:data});
+            }else{
+                res.send({status:false});
+            }
+          
+           
+           
+       }
+    }
 })
+
+
+app.get('/room-by-code/:roomCode', bodyParser.json(), (req, res)=>{
+    var roomCode = req.params['roomCode'];
+    var data = rooms[roomCode];
+    if(data != ""){
+        res.send({status:true, data:data});
+    }else{
+        res.send({status:false});
+    }
+})
+
+
+app.post("/room_pictures/:type/:email", upload.single('profilePic',), (req, res)=>{
+    if (!req.file) {
+        console.log("Your request doesn’t have any file");
+        return res.send({
+          success: false
+        });
+    
+      } else {
+                console.log('Your file has been received successfully');
+                return res.send({
+                  success: true,
+                  roomPic_src : "http://localhost:8000/room_pictures/"+req.file.filename
+                })
+            }
+          
+});
+       
+      
+

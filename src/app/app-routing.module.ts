@@ -11,6 +11,8 @@ import { AuthGuard } from './auth.guard';
 import { MessageareaComponent } from './messagearea/messagearea.component';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
+import { CreateroomComponent } from './createroom/createroom.component';
+import { SearchroomsComponent } from './searchrooms/searchrooms.component';
 
 
 const routes: Routes = [
@@ -29,7 +31,9 @@ const routes: Routes = [
     {path:'profile', component:ProfileComponent},
     {path:'chat', component:ChatComponent},
     {path:'message-area', component:MessageareaComponent},
-    {path:'view-profile', component:ViewProfileComponent}
+    {path:'view-profile', component:ViewProfileComponent},
+    {path:'create-room', component:CreateroomComponent},
+    {path:'search-room', component:SearchroomsComponent}
   ]}, 
  
 

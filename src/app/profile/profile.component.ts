@@ -84,7 +84,6 @@ export class ProfileComponent implements OnInit {
   
   changeGender(e){
     this.gender = e.target.options[e.target.selectedIndex].value;
-    console.log(this.gender);
   }
 
   fileSelectAndUpload(event)
@@ -104,7 +103,9 @@ export class ProfileComponent implements OnInit {
 
   savedetails(){
     this.ds.spinnerControl('show');
-    var data = {password:this.password, gender:this.gender, about:this.about};
+    var firstName = this.FullName.split(' ')[0];
+    var lastName = this.FullName.split(' ')[1] || "";
+    var data = {firstName:firstName, lastName:lastName ,password:this.password, gender:this.gender, about:this.about};
     console.log(data);
     this.Httpc.post("http://localhost:8000/save-details/"+ localStorage.getItem('email'),data).subscribe((res:any)=>{
       

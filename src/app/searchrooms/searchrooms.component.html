@@ -1,0 +1,38 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12 content">
+            
+            <h1 class='mt-3 text-center'><small>All Chat Rooms : Total {{ room_list.length }} Available</small></h1>
+            <hr>
+            <form action=""  #searchForm='ngForm' class="form">
+                
+                <div class="form-group">
+                    <label for="roomCode" class='form-label' style='text-align:center;width:100%; font-size:20px; letter-spacing: 2px;' >Enter Room Code</label>
+                    <input type="text" name="roomCode" #code='ngModel' class='form-control' ngModel [(ngModel)]='roomCode' placeholder='enter code here' id="">
+                </div>
+                <div class="search-btn text-center">
+                    <button class='btn btn-success px-4 py-2' (click)='search()'>Search</button>
+                </div>
+            </form>
+            
+            <div class="rooms mt-4">
+                <div *ngFor="let room of room_list" class="room-indi bg-dark" (click)="goToRoom(room.roomCode)"  >
+                    <span class="status online"></span>
+                    <div class='left'>
+                    <div class="picture-box">
+                        <img [src]="room.roomPic" alt="pic of the chat room">
+                    </div>
+                    <h5 class='bg-success text-center'><small> {{ room.roomName }}</small></h5>
+                    </div>
+                    <div class='right'>
+                       <h5><small>category: {{ room.category }}</small></h5>
+                       <h5><small>created by: {{ room.createdBy }}</small></h5>
+                       <p>{{ room.description }}</p>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
