@@ -52,6 +52,10 @@ export class DataService {
   signup(data):any{
     return this.httpclient.post('http://localhost:8000/sign-up', data);
   }
+
+  verifyAccount(data){
+    return this.httpclient.post("http://localhost:8000/verify-account",data);
+  }
   
   spinnerControl(display):void{
     var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];

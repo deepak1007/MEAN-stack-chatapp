@@ -1,27 +1,28 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <h2 class='text-center mt-sm-3'><small>contact us</small></h2> <hr>
+            
             <div class="form-container">
+                <h2 class='text-center mt-sm-3'><small>contact us</small></h2> <hr>
                 <form action="" #contactForm='ngForm' (ngSubmit)='sendQuery()'>
                     <div class="form-group">
                         <label for="name" class='form-label'>Name:</label><span *ngIf="name.invalid && name.touched" class='error ml-2'> *please enter valid name</span>
-                        <input type="text" name="name" class='form-control' pattern ="[a-z\sA-Z]+" #name='ngModel' required id="" [(ngModel)]='fullName' ngModel>
+                        <input type="text" name="name" class='form-control' placeholder="ex. Ravi singh" pattern ="[a-z\sA-Z]+" #name='ngModel' required id="" [(ngModel)]='fullName' ngModel>
                         
                     </div>
                     <div class="form-group">
                         <label for="email" class='form-label'>Email:</label><span *ngIf="email.invalid && email.touched" class='error ml-2'> *please enter valid email</span>
-                        <input type="email" name="email" class="form-control" pattern ="[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]+" required email #email="ngModel" id="" [(ngModel)]='userEmail' ngModel>
+                        <input type="email" name="email" class="form-control" placeholder="ex:ravi123@gmail.com" pattern ="[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]+" required email #email="ngModel" id="" [(ngModel)]='userEmail' ngModel>
                         
                     </div>
                     <div class="form-group">
                         <label for="phone_no" class='form-label'>Phone:</label><span *ngIf="phone_no.invalid && phone_no.touched" class='error ml-2'> *please enter valid Phone number</span>
-                        <input type="text" name="phone_no" class="form-control" #phone_no='ngModel' pattern="[0-9+]+" minlength="10" maxlength="13" required id="" [(ngModel)]='phone' ngModel>
+                        <input type="text" name="phone_no" placeholder="ex: 9968901231" class="form-control" #phone_no='ngModel' pattern="[0-9+]+" minlength="10" maxlength="13" required id="" [(ngModel)]='phone' ngModel>
                         
                     </div>
                     <div class="form-group">
                         <label for="query" class='form-label'>Query:</label><span *ngIf="query.invalid && query.touched" class='error'> *please write a query</span>
-                        <textarea name="query" id="" cols="30" rows="6" required #query='ngModel' ngModel class='form-control' [(ngModel)]='userQuery'></textarea>
+                        <textarea name="query" id="" cols="30" rows="6" placeholder="how to register an account?" required #query='ngModel' ngModel class='form-control' [(ngModel)]='userQuery'></textarea>
                         
                     </div>
                     <div style='text-align: center;'>
@@ -30,6 +31,7 @@
                     
                 </form>
             </div>
+
         </div>
     </div>
 </div>

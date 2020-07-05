@@ -10,11 +10,13 @@
   "author": "Deepak Sharma, Gargi Soni",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "mongoose": "^5.9.19",
     "multer": "^1.4.2",
+    "nodemailer": "^6.4.10",
     "socket.io": "^2.3.0"
   }
 }

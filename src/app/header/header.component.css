@@ -10,6 +10,8 @@
 }
 h3{
     font-size:25px;
+    letter-spacing: 3px;
+    font-weight: bolder;
 }
 .text span{
     transform:scale(0.6);
@@ -33,6 +35,9 @@ h3{
     margin: 0 3vw;
 }
 
+.text{
+     letter-spacing:1px;
+}
 
 
 @media screen and (max-width:600px){

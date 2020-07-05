@@ -5,10 +5,13 @@
 .normal-pages-main-screen{
     width:100%;
     height:82vh;
-    background:whitesmoke;
+    background:white;
 }
 
-
+.footer{
+    background:whitesmoke;
+    min-height:7vh
+}
 @media screen and (max-width:600px){
    
     .normal-pages-main-screen{
@@ -16,7 +19,7 @@
         min-height:90vh;
     }
     .footer{
-        background:white;
+        background:whitesmoke;
         display:block;
         width:100%;
     }

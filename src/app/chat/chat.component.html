@@ -1,7 +1,7 @@
-<div class="container">
+<div class=" container-lg">
     <div class="row">
         <div class="col-12 p-5 category-container">
-            <div class="join-group p-2 bg-dark" (click)="goToMessageArea()">
+            <div class="join-group p-2 bg-dark ld ld-zoom-in" (click)="goToMessageArea()">
                  <div class='headers'>
                      <h3>Join Group</h3>
                      <div class="arrow">
@@ -12,30 +12,32 @@
                     <p class='bg-secondary'>Join a random group chat </p>
                 </div>
             </div>
-
-            <div class="join-group make-room mt-5 p-2 bg-dark" (click)="goToCreateRoom()">
-                <div class='headers'>
-                    <h3>Create Room</h3>
+            <div class='part'>
+                <div class="join-group make-room mt-5 p-2 bg-dark" (click)="goToCreateRoom()">
+                    <div class='headers'>
+                        <h3>Create Room</h3>
+                        <div class="arrow">
+                            <i class='fa fa-arrow-right'></i>
+                        </div>
+                   </div> 
+                   <div class="text">
+                       <p class='bg-secondary'>create a room for chat </p>
+                   </div>
+               </div>
+    
+               <div class="join-group enter-room mt-5 p-2 bg-dark" (click)="goToSearchRoom()">
+                 <div class='headers'>
+                    <h3>Search Room</h3>
                     <div class="arrow">
                         <i class='fa fa-arrow-right'></i>
                     </div>
-               </div> 
-               <div class="text">
-                   <p class='bg-secondary'>create a room for chat </p>
-               </div>
-           </div>
-
-           <div class="join-group enter-room mt-5 p-2 bg-dark" (click)="goToSearchRoom()">
-             <div class='headers'>
-                <h3>Search Room</h3>
-                <div class="arrow">
-                    <i class='fa fa-arrow-right'></i>
+                </div> 
+                <div class="text">
+                    <p class='bg-secondary'>Search For Room</p>
                 </div>
-            </div> 
-            <div class="text">
-                <p class='bg-secondary'>Search For Room</p>
+              </div>
             </div>
-          </div>
+           
         </div>
     </div>
 </div>

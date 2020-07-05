@@ -5,6 +5,8 @@ const multer = require('multer');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const soc = require('socket.io');
+const bcrypt = require('bcrypt');
+var nodemailer = require('nodemailer');
 //const http = require('http');
 
 
@@ -34,7 +36,49 @@ const io = soc.listen(server);
     }
 
 });*/
+function buildLink(hash){
+    var emailBody = "<h3>Please click on the link below to verify your account</h3>";
+    emailBody = emailBody + "<a href='http://localhost:4200/verify-account?hash=" + hash + "'>click here to verify</a>";
+    return emailBody;
+}
 
+
+function sendMail(from, to, subject,  htmlmsg)
+{
+    let transporter=nodemailer.createTransport(
+        {
+            host:"smtp.gmail.com",
+            port:587,
+            secure:false,
+            auth:
+            {
+             
+             user: "dkboss12333@gmail.com",
+              pass:"Dkbosss12333lavairisx8"
+    
+            }
+        }
+      );
+    let mailOptions=
+    {
+       from:from ,
+       to:to,
+       subject:subject,
+       html:htmlmsg
+    };
+    transporter.sendMail(mailOptions ,function(error,info)
+    {
+      if(error)
+      {
+        console.log(error);
+        emailFlag = 0;
+      }
+      else
+      {  emailFlag = 1;
+        console.log('Email sent:'+info.response);
+      }
+    });
+}
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -95,12 +139,12 @@ app.use(cors());
 
 
 //socket---------------------------------------------->
-var univarsal = {roomName: "General", createdBy: "", description:"Random Group for Everyone", category:"general", type:"public", password:"",roomPic:'../../assets/icons/Infinity-1.9s-221px.png', roomCode:"XyzaBc1Kzsxsw3", roomLink:'http://localhost:4200/chat-dashboard/message-area', roomMembers:0};
+var univarsal = {roomName: "General", createdBy: "admin", description:"Random Group for Everyone", category:"general", type:"public", password:"",roomPic:'../../assets/icons/Infinity-1.9s-221px.png', roomCode:"XyzaBc1Kzsxsw3", roomLink:'http://localhost:4200/chat-dashboard/message-area', roomMembers:0};
 
 let rooms  = {"XyzaBc1Kzsxsw3" : univarsal}; //room lists room_name : members
 let userCount = 0;
 let id_to_email = {};
-io.on('connection',(client)=>{
+io.on('connection',(client)=>{ 
      userCount++; 
     console.log("user connected " + userCount);  
     
@@ -116,7 +160,7 @@ io.on('connection',(client)=>{
     });
 
 
-    client.on("create-message",(data)=>{
+    client.on("create-message",(data)=>{ 
          data['from_id'] = client.id; //inserts the message's form_id in the incoming data.
         // io.sockets.emit("new-message", JSON.stringify(data));
          io.sockets.in(client.currentRoom).emit("new-message", JSON.stringify(data));
@@ -145,13 +189,16 @@ app.post('/login', bodyParser.json(), (req, res)=>{
     var password = req.body.password;
     collection.find({email:email, password:password}).toArray((err, data)=> {
         if(!err && data.length>0){
-            console.log(data);
-            console.log(data.length);
-            var  fullname =  data[0].firstname + data[0].lastname;
-            res.send({status:true, data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender, auth:1}}); 
+            if(data[0].auth==1){
+                var  fullname =  data[0].firstname + data[0].lastname;
+                res.send({status:true, data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender}}); 
+            }else{
+                res.send({status:false, data:{err:"please verify your account first with the link in your email"}})
+            }
+            
         }
         else{
-            res.send({status:false,data:{err:"couldn't find any data sorry!"}});
+            res.send({status:false,data:{err:"wrong email or password!"}});
         }
     })
     
@@ -159,16 +206,22 @@ app.post('/login', bodyParser.json(), (req, res)=>{
 
 
 app.post('/sign-up', bodyParser.json(), (req, res)=>{
+   
     var collection = connectedObj.db(Dbname).collection("users");
+    let hash = bcrypt.hashSync(req.body.email+req.body.firstname+req.body.password, 10);
+    req.body['hash'] = hash;
+    req.body['auth'] = 0;
     collection.find({email:req.body.email}).toArray((err,data)=>{
         if(!err && data.length==0){
-            collection.insertOne(req.body,(err, data)=>{
+            collection.insertOne(req.body,(err, innerdata)=>{
                 if(!err){
-                    res.status(201).send({status:true, data:{name:req.body.firstname, email: req.body.email}});
+                   
+                    sendMail("verifyBot@ChatingApp.com",req.body.email,"verify your email",buildLink(hash))
+                   
+                    res.send({status:true, data:{}});
                 }
                 else{
-                    console.log("ghhh");
-                    res.status(204).send({status:false, data:{err:"sorry an error occured wile signing in"}})
+                    res.send({status:false, data:{err:"sorry an error occured wile signing in"}});
                 }
             });
         }else{
@@ -178,6 +231,26 @@ app.post('/sign-up', bodyParser.json(), (req, res)=>{
 
 });
 
+app.post('/verify-account', bodyParser.json(), (req, res)=>{
+    var hash= req.body.hash;
+    var collection = connectedObj.db(Dbname).collection('users');
+    collection.find({hash:hash}).toArray((err, data)=>{
+        if(!err && data.length> 0){
+              collection.updateOne({hash:hash}, {$set:{auth:1}}, (innerErr, innerData)=>{
+                    if(!innerErr && innerData.modifiedCount>0 && innerData.matchedCount >0){
+                        console.log("done");
+                        res.send({status:true, data:{email:data[0].email}});
+                    }else{
+                        console.log(innerErr);
+                        console.log(innerData);
+                        res.send({status:false, data:{err:"sorry couldn't update your account"}});
+                    }
+              });
+            }else{
+                res.send({status:false, data:{err:"sorry couldn't find your account"}});
+            }
+     })
+})
 
 app.get('/get-details/:email', (req, res)=>{
     var collection = connectedObj.db(Dbname).collection("users");

@@ -9,6 +9,10 @@ input.ng-invalid, textarea.ng-invalid{
     border-left:2px solid red;
 }
 
+.error{
+    margin-left:5px;
+    color:red;
+}
 
 input:focus{
     outline: none;

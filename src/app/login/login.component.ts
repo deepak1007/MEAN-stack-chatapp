@@ -39,11 +39,14 @@ export class LoginComponent implements OnInit {
         }else{
           
           this.ds.spinnerControl('hide');
-          alert("sorry wrong email or password! please try again");
+          alert(response.data.err);
           
         }
        
        
+    }, (err)=>{
+      this.ds.spinnerControl('hide');
+      alert("sorry some error has occured");
     });
     
   }

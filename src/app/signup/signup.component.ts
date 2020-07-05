@@ -34,13 +34,16 @@ export class SignupComponent implements OnInit {
    this.ds.signup({firstname:this.valuefirstName, lastname:this.valuelastName, email:this.valueemail, password:this.valuepassword, about:"" , gender:""}).subscribe((response)=>{
       if(response.status == true){
         this.ds.spinnerControl('hide');
-        alert("congratulations you are registered please login to continue");
+        alert("We have sent you an email with the verification link, please verify your account");
         this.router.navigate(['/login']);
       }else{
         this.ds.spinnerControl('hide');
         alert(response.data.err);
         
       }
+   },(err)=>{
+     this.ds.spinnerControl('hide');
+     alert("some problem has occured please try again");
    });
 
   

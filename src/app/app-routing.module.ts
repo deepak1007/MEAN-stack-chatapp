@@ -13,6 +13,7 @@ import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { CreateroomComponent } from './createroom/createroom.component';
 import { SearchroomsComponent } from './searchrooms/searchrooms.component';
+import { VerifyaccountComponent } from './verifyaccount/verifyaccount.component';
 
 
 const routes: Routes = [
@@ -21,7 +22,8 @@ const routes: Routes = [
     {path:'', component:HomeComponent},
     {path:'login', component:LoginComponent},
     {path:'sign-up', component:SignupComponent},
-    {path:'contact-us', component:ContactUsComponent}
+    {path:'contact-us', component:ContactUsComponent},
+    {path:'verify-account', component:VerifyaccountComponent}
   ]},
 
    {path:'home',redirectTo:'',  component:HomeComponent},
