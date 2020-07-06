@@ -155,7 +155,7 @@
 }
 .inner .flexed-element-container .pic img{
      width:100%;
-     animation: float 3s infinite ease-in-out;
+     animation: float 4s infinite ease-in-out;
 }
 @keyframes float{
     0%{

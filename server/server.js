@@ -143,36 +143,44 @@ var univarsal = {roomName: "General", createdBy: "admin", description:"Random Gr
 
 let rooms  = {"XyzaBc1Kzsxsw3" : univarsal}; //room lists room_name : members
 let userCount = 0;
-let id_to_email = {};
+let id_to_email = {}; 
 io.on('connection',(client)=>{ 
      userCount++; 
-    console.log("user connected " + userCount);  
-    
+    console.log("user connected " + userCount);    
+     
     client.on('join-room', (data)=>{//client sends request to join perticular room (room_name)
         //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
         client.join(data.room_name);
         client.currentRoom = data.room_name; //new property to client socket that tells current room
         //id_to_email[client.id] = data.email; //didn't find use till now.
-        console.log(rooms); 
+        console.log(client.id + " joined " + client.currentRoom); 
+       // console.log(rooms[client.currentRoom]);
         rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers + 1;
         client.emit('uniqueIdReceive', {unique_id : client.id}); //sending unique client id.
-        io.sockets.in(client.currentRoom).emit('new-member',rooms[client.currentRoom].roomMembers);
+        io.sockets.in(client.currentRoom).emit('new-member',rooms[client.currentRoom].roomMembers); 
     });
 
 
     client.on("create-message",(data)=>{ 
          data['from_id'] = client.id; //inserts the message's form_id in the incoming data.
         // io.sockets.emit("new-message", JSON.stringify(data));
-         io.sockets.in(client.currentRoom).emit("new-message", JSON.stringify(data));
+         io.sockets.in(client.currentRoom).emit("new-message", JSON.stringify(data)); 
     });
 
     
     client.on("disconnect", ()=>{
-        console.log('user disconnected, client_id :' + client.id);
-        rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers - 1;
-        io.sockets.in(client.currentRoom).emit('new-member',rooms[client.currentRoom].roomMembers);
-        //delete id_to_email[client.id]; 
-        userCount--;
+        //console.log('user disconnected, client_id :' + client.id);  
+        try{
+            console.log("disconnected" + client.currentRoom + " id " + client.id);
+            //  console.log(client);
+              rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers - 1;
+              io.sockets.in(client.currentRoom).emit('new-member',rooms[client.currentRoom].roomMembers);
+              //delete id_to_email[client.id]; 
+              userCount--; 
+        }catch{
+            console.log("disconnectoin error for " + client.id);
+        }
+       
     })
 })
 
@@ -391,7 +399,7 @@ app.post('/get-available-rooms', bodyParser.json(), (req, res)=>{
 
 app.get('/room-by-code/:roomCode', bodyParser.json(), (req, res)=>{
     var roomCode = req.params['roomCode'];
-    var data = rooms[roomCode];
+    var data = rooms.hasOwnProperty(req.params['roomCode'])?rooms[roomCode]: "";
     if(data != ""){
         res.send({status:true, data:data});
     }else{

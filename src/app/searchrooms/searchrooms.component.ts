@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 export class SearchroomsComponent implements OnInit {
   room_list;
   roomCode;
+  no = 0;
   constructor(private httpc:HttpClient, private router:Router , private ds:DataService) { }
 
   ngOnInit(): void {
@@ -55,9 +56,9 @@ export class SearchroomsComponent implements OnInit {
     this.ds.spinnerControl('show');
     this.httpc.get('http://localhost:8000/room-by-code/'+code).subscribe((res:any)=>{
       if(res.status == true){
-       
+        console.log(res.data);
         this.router.navigate(['/chat-dashboard/message-area'],{queryParams:res.data});
-        this.ds.spinnerControl('hide');
+        this.ds.spinnerControl('hide'); 
       }
     })
   }

@@ -75,7 +75,7 @@ input.ng-invalid{
     width:100%;
     height:100%;
     position:relative;
-    animation: float 3s infinite ease-in-out;
+    animation: float 4s infinite ease-in-out;
 }
 @keyframes float{
     0%{
