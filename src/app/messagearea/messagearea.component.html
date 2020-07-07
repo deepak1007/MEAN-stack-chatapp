@@ -35,14 +35,22 @@
                </div>
                <div *ngIf="message.from_id != getPublicId()" class="message-box message-partner ld ld-throw-btt-in" style='animation-duration: 0.5s;'>
 
-                 <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up ld ld-zoom-in' style="animation-duration: 1s;"></i>
+                 <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up' style="animation-duration: 1s;"></i>
+
+                 <div class="img">
+                  <img *ngIf="message.details.meme.is == 1" [src]="message.details.meme.memeData.url" [alt]="message.details.meme.memeData.title">
+                </div>
+                
                  {{message.details.message}}
                  
                </div>
 
               <div *ngIf="message.from_id == getPublicId()" (load)="scrollToBottom()" class="message-box bg-dark text-white">
 
-                <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up ld ld-zoom-in' style='animation-duration: 1s;'></i>
+                <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up' style='animation-duration: 1s;'></i>
+                <div class="img">
+                  <img *ngIf="message.details.meme.is == 1" [src]="message.details.meme.memeData.url" [alt]="message.details.meme.memeData.title">
+                </div>
                 {{message.details.message}}
 
               </div>
@@ -62,7 +70,7 @@
         <a href="#" class="fa fa-thumbs-up ld ld-zoom-in" (click)='sendLike($event)'></a>
         <!--<a href="#" class="fa fa-camera"></a>
         <a href="#" class="fa fa-video-camera"></a>-->
-        <a href="#" class="fa fa-image ld ld-zoom-in"></a>
+        <a href="#" class="ld ld-zoom-in" (click)="sendMeme($event)"><span *ngIf='loadingMeme == 0'>MEME</span> <img src="../../assets/icons/Infinity-1.9s-221px.png" style='width:25px; height:25px;' alt="loading...." *ngIf='loadingMeme'> </a>
         <!--<a href="#" class="fa fa-paperclip"></a>
         <a href="#" class="fa fa-link"></a>
         <a href="#" class="fa fa-trash-o"></a>
