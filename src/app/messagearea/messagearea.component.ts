@@ -160,14 +160,14 @@ export class MessageareaComponent implements OnInit {
 
    sendMessage(){
      if(this.createMessage != ""){
-      this.chatService.sendMessage({from_id:"anonymous", details:{name:this.ds.details.FullName, message:this.createMessage, react:{like:0}, meme:{is:0, memeData:""}}});//from id is anonymous .. it will be filled at the server side.
+      this.chatService.sendMessage({from_id:"anonymous", files:true, details:{name:this.ds.details.FullName, message:this.createMessage, react:{like:0}, meme:{is:0, memeData:""}}});//from id is anonymous .. it will be filled at the server side.
       this.createMessage= '';
      } 
    }
 
    sendLike(e){
      e.preventDefault();
-     this.chatService.sendMessage({from_id:"anonymous", details:{name:this.ds.details.FullName, message:"", react:{like:1}, meme:{is:0, memeData:""}}});
+     this.chatService.sendMessage({from_id:"anonymous", files:true, details:{name:this.ds.details.FullName, message:"", react:{like:1}, meme:{is:0, memeData:""}}});
    }
 
    sendMeme(e){
@@ -175,15 +175,20 @@ export class MessageareaComponent implements OnInit {
      this.loadingMeme = 1;
      this.Httpc.get("https://meme-api.herokuapp.com/gimme").subscribe((response:any)=>{
        if(response.url != "" && response.nsfw == false){
-
-        this.chatService.sendMessage({from_id:"anonymous", details:{name:this.ds.details.FullName, message:"",react:"", meme:{is:1, memeData:response}}});
-          this.loadingMeme = 0;
+        this.chatService.sendMessage({from_id:"anonymous",files:true, details:{name:this.ds.details.FullName, message:"",react:"", meme:{is:1, memeData:response}}});
+          this.loadingMeme = 0; 
        }
      },(err)=>{
-        alert("error occured");
+        alert("Sorry, Can't send maymay right now");
         this.loadingMeme = 0;
      })
      
+   }
+
+   downloadFile(e, type, src){
+     var img = <HTMLElement><any>e.target.parentElement.parentElement.firstElementChild;
+     img.setAttribute('src', src );
+     e.target.style.display= "none";
    }
 
 }

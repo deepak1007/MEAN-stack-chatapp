@@ -62,6 +62,7 @@
 
     .flex-item:hover{
         background:white;
+        cursor: pointer;
     }
 
    .sidenavcontainer:hover .sidenav .navigaton-links-container .flex-item p{

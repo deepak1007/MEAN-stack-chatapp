@@ -6,6 +6,10 @@
 .container-lg, .row{
     height:100%;
     position:relative;
+   
+}
+.row{
+    background:rgba(255,255,255,0.95);
 }
 .category-container{
     position:absolute;

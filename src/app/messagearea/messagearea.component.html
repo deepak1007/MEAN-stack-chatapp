@@ -32,25 +32,33 @@
            
                <div *ngIf="message.from_id != getPublicId()"  class="message-sender">
                   <span (click)='viewProfile(message.from_id)'>{{message.details.name}}</span>
+                  <span><i>.Remove</i></span>
                </div>
                <div *ngIf="message.from_id != getPublicId()" class="message-box message-partner ld ld-throw-btt-in" style='animation-duration: 0.5s;'>
 
                  <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up' style="animation-duration: 1s;"></i>
 
-                 <div class="img">
-                  <img *ngIf="message.details.meme.is == 1" [src]="message.details.meme.memeData.url" [alt]="message.details.meme.memeData.title">
+                 <div class="img" *ngIf="message.details.meme.is == 1">
+                  <img  src="" [alt]="message.details.meme.memeData.title">
+                  <span style='cursor:pointer' (click)='downloadFile($event,"image", message.details.meme.memeData.url)'> &nbsp; <i class='fa fa-download'></i></span>
                 </div>
                 
                  {{message.details.message}}
                  
-               </div>
+               </div> 
 
-              <div *ngIf="message.from_id == getPublicId()" (load)="scrollToBottom()" class="message-box bg-dark text-white">
+              <div *ngIf="message.from_id == getPublicId()" class="message-box bg-dark text-white">
 
                 <i *ngIf="message.details.react.like == 1" class='fa fa-thumbs-up' style='animation-duration: 1s;'></i>
-                <div class="img">
+                <!--<div class="img">
                   <img *ngIf="message.details.meme.is == 1" [src]="message.details.meme.memeData.url" [alt]="message.details.meme.memeData.title">
+                </div>-->
+
+                <div class="img" *ngIf="message.details.meme.is == 1">
+                  <img  src="" [alt]="message.details.meme.memeData.title">
+                  <span style='cursor:pointer' (click)='downloadFile($event,"image", message.details.meme.memeData.url)'> &nbsp; <i class='fa fa-download'></i></span>
                 </div>
+
                 {{message.details.message}}
 
               </div>

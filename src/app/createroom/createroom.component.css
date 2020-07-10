@@ -2,6 +2,14 @@
     box-sizing: border-box;
     letter-spacing: 1px;
 }
+
+.row{
+    background:rgba(255,255,255,0.96);
+    /*background: url("../../assets/5267.jpg");
+    background-size:cover;
+    background-position: center;
+    background-attachment: fixed;*/
+}
 input.ng-valid, textarea.ng-valid{
     border-left:2px solid green;
 }
@@ -18,10 +26,11 @@ input:focus{
     outline: none;
 }
 .create-room{
-    width:60%;
-    margin:40px auto;
-    margin-top:20px;
-    
+    margin:0px auto;
+    width:80%;;  
+}
+.form-control{
+    background:whitesmoke;
 }
 h3{
     letter-spacing:2px;
@@ -71,3 +80,33 @@ input[type='file']{
     
 }
 
+.room-name{
+    float:left;
+}
+.room-cat{
+    float:right;
+}
+.room-name, .room-cat{
+    width:49%;
+    display:inline-block;
+
+}
+@media screen and (max-width:700px){
+    .container{
+         display:inline-block;
+         width:100%;
+         height:unset;
+         min-height: 100%;
+         padding:0px;
+    }
+    .form-group{
+        width:90%;
+        margin-left:auto;
+        margin-right:auto;
+    }
+
+    .room-name, .room-cat{
+        float:none;
+        display:block;
+    }
+}

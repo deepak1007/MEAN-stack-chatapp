@@ -1,9 +1,9 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <div class="create-room border p-5 pt-1">
+            <div class="create-room py-5 px-m-5 pt-1">
                 <h2 class='text-center mb-3'><small>Enter Room Details</small></h2>
-                <div class="profile-pic">
+                <div class="profile-pic mb-2">
                     <img [src]="roomPic_src" alt="">
     
                     <input 
@@ -20,11 +20,11 @@
                     </div>
                 </div>
                 <form action="" #createRoom='ngForm' class="form">
-                    <div class="form-group">
+                    <div class="form-group room-name">
                         <label for="roomName" class='form-label'>Enter Room Name:</label><span class='error' *ngIf='name.invalid && name.touched'>*please enter the room name</span>
                         <input type="text" name='roomName' class='form-control' required [(ngModel)]="roomName" #name="ngModel" ngModel>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group room-cat">
                         <label for="roomName" class='form-label'>Enter Room Category:</label><span class='error' *ngIf='cat.invalid && cat.touched'>*please enter the room Category</span>
                         <input type="text" name='roomCat' class='form-control' required [(ngModel)]="roomCat" #cat="ngModel" ngModel>
                     </div>

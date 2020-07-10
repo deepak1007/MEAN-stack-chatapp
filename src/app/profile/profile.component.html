@@ -2,7 +2,6 @@
     <div class="row">
         <div class="col-12 mt-5 mt-md-3">
             <h2 class='text-center mb-3'><small>Edit Your Profile</small></h2>
-            <hr>
             <div class="profile-container">
                
                     
@@ -28,29 +27,32 @@
                <!--details-->
                <div class="details">
                    <form action="">
-                       <div class="form-group">
-                           <label for="fullname" class='form-label'> <input type="text" class='form-control' name='fullName' placeholder="change name" [(ngModel)]="FullName"></label>
-                       </div>
-                       
-                       <div class="form-group">
-                        <label for="email" class='form-label'> <input type="text" class='form-control' name='email' [value]="email" Disabled></label>
+                    <div class="form-group">
+                        <label for="email" class='form-label text-center'> {{ email }} <!--<input type="text" class='form-control' name='email' [value]="email" Disabled>--></label>
                        </div>
 
                        <div class="form-group">
-                        <label for="pasword" class='form-label'> <input type="password" placeholder="new password" class='form-control' name='password' [(ngModel)]="password"> </label>
+                           <label for="fullname" class='form-label'>Full Name: <input type="text" class='form-control' name='fullName' placeholder="change name" [(ngModel)]="FullName"></label>
+                       </div>
+                       
+                       
+
+                       <div class="form-group">
+                        <label for="pasword" class='form-label'>Password: <input type="password" placeholder="new password" class='form-control' name='password' [(ngModel)]="password"> </label>
                        </div>
                        
                         <div class="form-group">
-                            <label for="about" class='form-label'><textarea name="about" id="about" cols="30" rows="3" class='form-control' placeholder="Enter something about your self" [(ngModel)]="about"></textarea></label>
+                            <label for="about" class='form-label'>About Yourself:<textarea name="about" id="about" cols="30" rows="3" class='form-control' placeholder="Enter something about your self" [(ngModel)]="about"></textarea></label>
                         </div>
 
                        <div class="form-group" >
+                        <label for="gender" class='form-label'>Gender:
                         <select name="gender"  (change)="changeGender($event)" class='form-control'>
                             <option value="" [selected]="(gender=='')">Select Gender</option>
                             <option value="male" [selected]="(gender=='male')">Male</option>
                             <option value="female" [selected]="(gender=='female')">Female</option>
                             <option value="no" [selected]="(gender=='no')">Hide Gender</option>
-                        </select>
+                        </select> </label>
                        </div>
                    </form>
                    <div class="buttons text-center mb-5">
