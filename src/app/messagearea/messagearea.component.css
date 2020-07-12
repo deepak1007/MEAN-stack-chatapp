@@ -227,6 +227,18 @@ ul {
 .member-controls ul li{
    letter-spacing: 1px;
 }
+.member-controls ul{
+  display:flex;
+  width:60%;
+  margin:0px auto;
+  justify-content: space-between;
+  margin:5px auto;
+}
+.member-controls ul li{
+   letter-spacing: 1px;
+}
+
+
 
 
 
@@ -497,4 +509,12 @@ ul {
        transform: translate(-50%, -50%);
         
      }
+
+     .member-controls ul{
+      display:flex;
+      width:90%;
+      margin:0px auto;
+      justify-content: space-between;
+      margin:5px auto;
+    }
 }

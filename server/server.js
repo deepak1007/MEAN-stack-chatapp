@@ -151,8 +151,8 @@ io.on('connection',(client)=>{
     client.on('join-room', (data)=>{
         //client sends request to join perticular room (room_name)
         //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
-        client.join(data.room_name);
-
+        if(!rooms[data.room_name].hasOwnProperty('banList') || !rooms[data.room_name].banList.hasOwnProperty(data.email)){
+            client.join(data.room_name);
         client.currentRoom = data.room_name; //new property to client socket that tells current room
         id_to_email[client.id] = data.email; //didn't find use till now.
         let auda_or_rutba = (data.email == rooms[client.currentRoom].admin)?"admin" : "member";
@@ -172,6 +172,10 @@ io.on('connection',(client)=>{
  
 
         io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails}); 
+    }else{
+        client.emit('rejected', {message:"Sorry can't join the room, seems like you are banned by the admin"});
+    }
+        
     });
 
  
@@ -184,6 +188,11 @@ io.on('connection',(client)=>{
     client.on('member_remove_req', (data)=>{ 
         admin_id = client.id;
         if(rooms[client.currentRoom].admin == id_to_email[client.id]){
+            if(!rooms[client.currentRoom].hasOwnProperty('banList')){
+                rooms[client.currentRoom]['banList'] = {};
+              
+            }
+            rooms[client.currentRoom]['banList'][id_to_email[data.id]] = 1;
             io.sockets.sockets[data.id].emit('banned', {ban:1, roomName:rooms[client.currentRoom].roomName, message:"you were removed by the admin"});
             io.sockets.sockets[data.id].disconnect();
 

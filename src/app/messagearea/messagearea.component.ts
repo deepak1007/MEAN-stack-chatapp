@@ -32,7 +32,7 @@ export class MessageareaComponent implements OnInit {
   loadingMeme=0;
   random=0;
   membersObserver;
-
+  rejectionObserver;
 
   FullName;
 
@@ -67,7 +67,7 @@ export class MessageareaComponent implements OnInit {
             if(data.get('random')==1){
               this.random = 1;
             }
-            this.chatService.join_room(this.roomCode, this.ds.details.FullName);//Joins the room and provides user's name function in chat-services.
+             this.chatService.join_room(this.roomCode, this.ds.details.FullName);//Joins the room and provides user's name function in chat-services.
             this.ds.spinnerControl('hide');
 
           }
@@ -88,6 +88,12 @@ export class MessageareaComponent implements OnInit {
     this.membersObserver = this.chatService.getMembers().subscribe((response:any)=>{
       this.roomMembers = response.memberCount;
         this.members = response.allMemberDetails;
+    })
+
+
+    this.rejectionObserver = this.chatService.rejected().subscribe((data:any)=>{
+      alert(data.message);
+      this.router.navigate(['/chat-dashboard/chat']);
     })
             
     this.banObserver = this.chatService.removed().subscribe((data:any)=>{
@@ -129,9 +135,9 @@ export class MessageareaComponent implements OnInit {
   ngOnDestroy(): void {
     var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
     spinner.style.display = "block";
-
     this.messageObserver.unsubscribe();
     this.membersObserver.unsubscribe();
+    this.rejectionObserver.unsubscribe();
     this.banObserver.unsubscribe();
     this.chatService.closeSocket();
     var header;
@@ -140,7 +146,6 @@ export class MessageareaComponent implements OnInit {
     var chat_side_nav;
     chat_side_nav  = <HTMLElement><any> document.getElementsByClassName('chatzonesidenav')[0];
     chat_side_nav.style.display = "flex";
-
     spinner.style.display = "none";
   }
 

@@ -49,7 +49,9 @@
                 </div>
               </div>
               <div class="tab-pane container fade" id="group"> 
-                Group
+
+                <app-createroom></app-createroom>
+
               </div>
 
             </div>
@@ -95,7 +97,6 @@ collapsable end  -->
            
                <div *ngIf="message.from_id != getPublicId()"  class="message-sender">
                   <span (click)='viewProfile(message.from_id)'>{{message.details.name}}</span>
-                  <span><i>.Remove</i></span>
                </div>
                <div *ngIf="message.from_id != getPublicId()" class="message-box message-partner ld ld-throw-btt-in" style='animation-duration: 0.5s;'>
 
