@@ -56,7 +56,11 @@ export class SearchroomsComponent implements OnInit {
     this.ds.spinnerControl('show');
     this.httpc.get('http://localhost:8000/room-by-code/'+code).subscribe((res:any)=>{
       if(res.status == true){
-        console.log(res.data);
+        if(code == 'XyzaBc1Kzsxsw3'){
+          res['random'] = 1;
+        }else{
+          res['random'] = 0;
+        }
         this.router.navigate(['/chat-dashboard/message-area'],{queryParams:res.data});
         this.ds.spinnerControl('hide'); 
       }

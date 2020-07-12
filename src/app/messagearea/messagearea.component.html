@@ -8,7 +8,7 @@
           <a target="_blank" [href]="roomPic"><img [src]="roomPic" /></a> 
         </div>
         <div class="chat-partner-name" [style]='{display:group?"":""}'>
-          <a  href="#" (click)="showGroupMenu()"> {{chat_name}}</a> &nbsp;
+          <a href='#' (click)="showGroupMenu($event)"> {{chat_name}}</a> &nbsp;
           <span class="status online"></span> {{ roomMembers }}
         </div> 
         <div class="chatbox-icons">
@@ -16,14 +16,77 @@
           <a (click)="performExit()"><i class="fa fa-close">&nbsp; Exit</i></a>
         </div>      
       </div>
-      
+     
       <div class="chat-messages">
+
         <div class="menu">
-          <div class="details" style='display:none'>
-             <h5><small>Group Name: </small></h5>
-             <h5><small>Group </small></h5>
+           <div (click)='hideGroupMenu()' class="closeMenu">
+             <span>X</span>
+           </div>
+          <div class="details">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs justify-content-center">
+              <li class="nav-item">
+                <a class="nav-link active px-3" data-toggle="tab" href="#Members">Manage Members</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link px-3" data-toggle="tab" href="#group">Manage Group</a>
+              </li>
+            </ul>
+            
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <div class="tab-pane container active" id="Members">
+                <div class='member-controls'>
+                  
+                        <ul class='list' *ngFor="let member of members  | keyobject">
+                          <li><span class="status online"></span></li>
+                         <!-- <li><img [src]="member.proPic" style='width:30px;height:30px; border-radius: 50%;' alt=""></li>-->
+                         <li>{{ member.value.member_role}}</li>
+                          <li>{{ member.value.memberName }}</li>
+                          <li (click)='removeMember(member.key)'><span *ngIf='!random && member.key != getPublicId() && isAdmin()' style="color:red; cursor:pointer">ban</span></li>
+                       </ul>
+                </div>
+              </div>
+              <div class="tab-pane container fade" id="group"> 
+                <app-createroom></app-createroom>
+              </div>
+
+            </div>
+<!--  collapsable start    
+             <div id="group">
+               <div class="card">
+                 <div class="card-header">
+                   <a href="#collapseMembers" class="card-link" data-toggle="collapse">
+                     Manage Members
+                   </a>
+                 </div>
+                 <div id="collapseMembers" class="collapse show" data-parent="#group">
+                   <div class="members card-body">
+                     sendMessage
+                   </div>
+                 </div>
+               </div>
+
+               <div class="card">
+                 <div class="card-header">
+                   <a href="#collapseEditDetails" class='collapsed card-link' data-toggle="collapse">
+                     Manage Group
+                   </a>
+                 </div>
+                 <div id="collapseEditDetails" class="collapse" data-parent="#group">
+                   <div class="groupDetails card-body">
+                     <form class='form' action="">
+                       dd
+                     </form>
+                   </div>
+                 </div>
+               </div>
+             </div>
+collapsable end  -->
           </div>
         </div>
+        
         <h5 class='text-center mb-2' style='width:100vw;'><small>Room Code : {{ roomCode }}</small></h5>
         <h5 class='text-center mb-2' style='width:100vw;'><small>start messaging...</small></h5>
 
@@ -32,7 +95,6 @@
            
                <div *ngIf="message.from_id != getPublicId()"  class="message-sender">
                   <span (click)='viewProfile(message.from_id)'>{{message.details.name}}</span>
-                  <span><i>.Remove</i></span>
                </div>
                <div *ngIf="message.from_id != getPublicId()" class="message-box message-partner ld ld-throw-btt-in" style='animation-duration: 0.5s;'>
 

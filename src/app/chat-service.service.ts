@@ -12,7 +12,6 @@ export class ChatServiceService {
   constructor(private clientIO: Socket) { }
 
   public openConnection(){
-    this.clientIO.disconnect();
     this.clientIO.connect();
   }
 
@@ -32,13 +31,39 @@ export class ChatServiceService {
 });
   }
   
-  public join_room = (room_name) =>{
-    this.clientIO.emit('join-room', {room_name:room_name, email:localStorage.getItem('email')});
-    this.clientIO.on('uniqueIdReceive', (unique_id)=>{//takes the unique id of the socket fills it in local storage.
-       localStorage.setItem('uniqueChatId', unique_id.unique_id);//unique id for identification of message belongingness.
-    })
-  }
 
+  public removed = ()=>{
+    return Observable.create((observer)=>{
+      this.clientIO.on('banned', (data)=>{
+        observer.next(data);
+      })
+    })
+  };
+  
+  public join_room(room_name, memberName): any{ //called in messagearea
+    this.clientIO.emit('join-room', {room_name:room_name, memberName:memberName, email:localStorage.getItem('email')});
+    this.clientIO.on('uniqueIdReceive', (unique_id)=>{//takes the unique id of the socket fills it in local storage.
+      localStorage.setItem('uniqueChatId', unique_id.unique_id);//unique id for identification of message belongingness.
+      if(unique_id.hasOwnProperty('setAdmin') && unique_id.setAdmin == 1){
+        localStorage.setItem(unique_id.group, unique_id.unique_id);
+      }
+    });
+
+  
+  }
+  
+  public removeMember(data){
+    this.clientIO.emit('member_remove_req', data);
+  }
+  
+  
+   public rejected(){
+     return Observable.create((observer)=>{
+      this.clientIO.on('rejected', (data)=>{
+        observer.next(data);
+      });
+     });
+   }
   
   
 

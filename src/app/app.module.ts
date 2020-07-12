@@ -23,6 +23,7 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
 import { CreateroomComponent } from './createroom/createroom.component';
 import { SearchroomsComponent } from './searchrooms/searchrooms.component';
 import { VerifyaccountComponent } from './verifyaccount/verifyaccount.component';
+import { KeyobjectPipe } from './keyobject.pipe';
 
 
 const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['websocket','polling']}};
@@ -46,7 +47,8 @@ const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['webso
     ContactUsComponent,
     CreateroomComponent,
     SearchroomsComponent,
-    VerifyaccountComponent
+    VerifyaccountComponent,
+    KeyobjectPipe
   ],
   imports: [
     BrowserModule,
