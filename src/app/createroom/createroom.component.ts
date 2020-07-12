@@ -29,14 +29,14 @@ export class CreateroomComponent implements OnInit {
   
   create_room(){
     this.ds.spinnerControl('show');
-    var data = {creator:localStorage.getItem('email'),roomName:this.roomName, roomDescription:this.roomDescription, roomCategory:this.roomCat, roomPassword:this.roomPass, roomPrivacy:this.privacy, roomPic:this.roomPic_src||"../../assets/45653808_553438705081091_2716345778523078656_o.png"};
+    var data = {creator:localStorage.getItem('email'),roomName:this.roomName, roomDescription:this.roomDescription, roomCategory:this.roomCat, roomPassword:this.roomPass, roomPrivacy:this.privacy, roomPic:this.roomPic_src||"../../assets/45653808_553438705081091_2716345778523078656_o.png",roomMembers:0, memberDetails:{}};
     this.ds.createRoomOnServer(data).subscribe((response:any)=>{
       if(response.status==true){
         data = response.data;
       
         this.ds.spinnerControl('close');
         alert('room has been created');
-        
+        data['random'] = 0;
         this.router.navigate(['/chat-dashboard/message-area'],{queryParams:data});  
       }
       else{

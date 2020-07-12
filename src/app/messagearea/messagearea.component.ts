@@ -4,7 +4,8 @@ import { ChatServiceService } from '../chat-service.service';
 import { DataService } from '../data.service';
 import { HttpClient } from "@angular/common/http";
 
-import { analyzeAndValidateNgModules } from '@angular/compiler';
+
+
 
 @Component({
   selector: 'app-messagearea',
@@ -14,7 +15,9 @@ import { analyzeAndValidateNgModules } from '@angular/compiler';
 export class MessageareaComponent implements OnInit {
   createMessage:string;
   messageList = [];
+  members = {};
   messageObserver;
+  banObserver;
 
   chat_name;
   mod;
@@ -27,7 +30,7 @@ export class MessageareaComponent implements OnInit {
   roomMembers
   group=1;
   loadingMeme=0;
-
+  random=0;
   membersObserver;
 
 
@@ -40,21 +43,39 @@ export class MessageareaComponent implements OnInit {
   ngOnInit(): void {
 
     this.ds.spinnerControl('show');
-    
+    //in file data.service.ts for filling the details object so that we can use the all the informations here
+  
     this.chatService.openConnection();
     
-    
+ 
     this.ar.queryParamMap.subscribe((data:any)=>{
-      this.roomDescription = data.get('description');
-      this.roomCategory = data.get('category');
-      this.roomPassword = data.get('password');
-      this.chat_name = data.get('roomName');
-      this.mod = data.get('createdBy');
-      this.roomPrivacy = data.get('type');
-      this.roomCode = data.get('roomCode');
-      this.roomPic = data.get('roomPic');
-      this.roomMembers = data.get('roomMembers');
-      this.chatService.join_room(this.roomCode);
+
+      if(localStorage.getItem('email')){
+        this.Httpc.get('http://localhost:8000/get-details/'+localStorage.getItem('email')).subscribe((resp:any)=>{
+          if(resp.status == "200")
+          {
+            this.ds.filldetails(resp.data);
+            this.roomDescription = data.get('description');
+            this.roomCategory = data.get('category');
+            this.roomPassword = data.get('password');
+            this.chat_name = data.get('roomName');
+            this.mod = data.get('createdBy');
+            this.roomPrivacy = data.get('type');
+            this.roomCode = data.get('roomCode');
+            this.roomPic = data.get('roomPic');
+            this.roomMembers = data.get('roomMembers');
+            if(data.get('random')==1){
+              this.random = 1;
+            }
+            this.chatService.join_room(this.roomCode, this.ds.details.FullName);//Joins the room and provides user's name function in chat-services.
+            this.ds.spinnerControl('hide');
+
+          }
+        });
+      }
+  
+    },(err)=>{
+      alert("some error has occured please go back and try again");
       this.ds.spinnerControl('hide');
     })
      
@@ -64,12 +85,18 @@ export class MessageareaComponent implements OnInit {
    
                });
 
-    this.membersObserver = this.chatService.getMembers().subscribe((members)=>{
-      this.roomMembers = members;
+    this.membersObserver = this.chatService.getMembers().subscribe((response:any)=>{
+      this.roomMembers = response.memberCount;
+        this.members = response.allMemberDetails;
     })
             
-    this.ds.detailsFiller(); //in file data.service.ts for filling the details object so that we can use the all the informations here
-    
+    this.banObserver = this.chatService.removed().subscribe((data:any)=>{
+        if(data.ban ==1 ){
+          alert("sorry! you were removed by the admin");
+          this.router.navigate(['/chat-dashboard/chat']);
+        }
+    });
+
     function headershowhide(){
       //if computer view then show side nav and header but for mobile view hide both...
       if(1){
@@ -105,6 +132,7 @@ export class MessageareaComponent implements OnInit {
 
     this.messageObserver.unsubscribe();
     this.membersObserver.unsubscribe();
+    this.banObserver.unsubscribe();
     this.chatService.closeSocket();
     var header;
     header = <HTMLElement><any> document.getElementsByClassName('header')[0];
@@ -141,11 +169,28 @@ export class MessageareaComponent implements OnInit {
   viewProfile(id){
     this.router.navigate(['/chat-dashboard/view-profile'], {queryParams: {id : id}});
   }
-  
-  showGroupMenu(){
 
+  isAdmin(){
+    if(localStorage.getItem(this.chat_name) == this.getPublicId()){
+      return 1;
+    }else{
+      return 0;
+    }
+  }
+  
+  showGroupMenu(e){
+    e.preventDefault();
+      var menu = <HTMLElement><any>document.getElementsByClassName('menu')[0];
+      menu.style.display = 'inline-block';
+  }
+  hideGroupMenu(){
+    var menu = <HTMLElement><any>document.getElementsByClassName('menu')[0];
+      menu.style.display = 'none';
   }
   //chat function call from the chat services----------------------->
+  removeMember(id){
+    this.chatService.removeMember({id:id});
+  }
 
   checkIfEnter(e){
     var e = e || window.event;

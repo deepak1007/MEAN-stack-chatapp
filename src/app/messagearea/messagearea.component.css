@@ -29,6 +29,10 @@ ul {
 ::-webkit-scrollbar{
     width:0px;
 }
+.chatbox{
+  position:relative;
+}
+
 
 .logo{
     color:white;
@@ -66,6 +70,7 @@ ul {
   transition: .1s ease-out;
   width:100%;
   height:100%;
+
 }
 
 .chatbox-top {
@@ -169,7 +174,61 @@ ul {
   align-content: flex-start;
   flex: 1;
   scrollbar-width: none;
+  position:relative;
 }
+
+.menu{
+  position:absolute;
+  top:0%;
+  left:0%;
+  display:none;
+  height:100%;
+  width:100%;
+  background:rgba(255,255,255,0.9);
+  z-index:1111;
+}
+.menu .closeMenu{
+  position:absolute;
+  display:inline-block;
+  top:10px;
+  right:20px;
+  font-size:20px;
+  cursor:pointer;
+  color:red;
+
+}
+
+.menu .details{
+  position:absolute;
+  left:50%;
+  width:80%;
+  margin-top:20px;
+  transform:translate(-50%,0%);
+  color:black;
+  letter-spacing: 1px;
+  font-size:20px;
+  
+}
+
+.member-controls{
+  height:55vh;
+  margin:10px;
+  overflow:auto;
+  scrollbar-width: none;
+  cursor: all-scroll  ;
+}
+.member-controls ul{
+  display:flex;
+  width:60%;
+  margin:0px auto;
+  justify-content: space-between;
+  margin:5px auto;
+}
+.member-controls ul li{
+   letter-spacing: 1px;
+}
+
+
 
 .message-box-holder {
   width: 100%;

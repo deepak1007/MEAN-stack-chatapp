@@ -23,7 +23,7 @@ export class ChatComponent implements OnInit {
 
     this.httpc.get('http://localhost:8000/room-by-code/XyzaBc1Kzsxsw3').subscribe((res:any)=>{
       if(res.status == true){
-       
+        res.data['random'] = 1;
         this.router.navigate(['/chat-dashboard/message-area'],{queryParams:res.data});
         spinner.style.display = "none";
       }
