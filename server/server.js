@@ -198,7 +198,7 @@ io.on('connection',(client)=>{
 
             io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails}); 
         }
-    })
+    });
     
     client.on("disconnect", ()=>{ 
         //console.log('user disconnected, client_id :' + client.id);  
@@ -215,7 +215,7 @@ io.on('connection',(client)=>{
         }
        
     })
-})
+});
 
 
 
