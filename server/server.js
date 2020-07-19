@@ -53,8 +53,7 @@ function sendMail(from, to, subject,  htmlmsg)
             auth:
             {
              
-             user: "dkboss12333@gmail.com",
-              pass:"Dkbosss12333lavairisx8"
+             
     
             }
         }
