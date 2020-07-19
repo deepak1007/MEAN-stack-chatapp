@@ -99,7 +99,7 @@ let upload = multer({storage: storage});
 
 
 
-/*var client  = new MongoClient('mongodb+srv://deepaksharma:deepak12333@deepak-adqsa.mongodb.net/ChatAppDB?retryWrites=true&w=majority', {useNewUrlParser:true,useUnifiedTopology: true});
+/*var client  = new MongoClient('mongodb+srv://:@deepak-adqsa.mongodb.net/ChatAppDB?retryWrites=true&w=majority', {useNewUrlParser:true,useUnifiedTopology: true});
 */
 var client  = new MongoClient('mongodb://localhost:27017/', {useNewUrlParser:true,useUnifiedTopology: true});
 client.connect((err, con)=>{
