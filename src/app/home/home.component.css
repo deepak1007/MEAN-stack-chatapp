@@ -155,7 +155,7 @@
 }
 .inner .flexed-element-container .pic img{
      width:100%;
-     animation: float 4s infinite ease-in-out;
+     /*animation: float 4s infinite ease-in-out;*/
 }
 @keyframes float{
     0%{
@@ -185,6 +185,7 @@
 .container-fluid{
     width:100%;
     padding:0;
+    background:whitesmoke;
 }
 
 .row{
@@ -228,9 +229,12 @@
     overflow-y:hidden;
     letter-spacing: 1px ;
     margin-bottom:20px;
+    text-align:justify;
+    font-weight: 800;
 }
 .text p{
     letter-spacing:1px;
+    text-align:justify;
 }
 .inner .flexed-element-container .pic{
     display:block;
@@ -246,6 +250,11 @@
      
 }
 
+
+.btn{
+    width: 100% !important;
+    margin-top:5px;
+}
 
 
 }

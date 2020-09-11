@@ -1,105 +1,27 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const multer = require('multer');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const soc = require('socket.io');
 const bcrypt = require('bcrypt');
-var nodemailer = require('nodemailer');
+const sendMail = require('./mail').sendMail;
+const buildLink = require('./mail').buildLink;
+const upload = require('./multerConfig'); 
 //const http = require('http');
+
 
 
 const app = express();
 const Dbname = "ChatAppDB";
-let DIR = './server/upload';
 let connectedObj;
 
 const server = app.listen(8000, () => {
     console.log('Server started!')
 });
 
-//const server = http.Server(app);
 const io = soc.listen(server);
-
-/*const io = soc(server, {
-    handlePreflightRequest: (req, res)=>{
-        const headers = {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Oringin" : "http://localhost:4200",
-            "Access-Control-Allow-Credentials" : true
-
-        };
-
-        res.writeHead(200,headers);
-        res.end();
-    }
-
-});*/
-function buildLink(hash){
-    var emailBody = "<h3>Please click on the link below to verify your account</h3>";
-    emailBody = emailBody + "<a href='http://localhost:4200/verify-account?hash=" + hash + "'>click here to verify</a>";
-    return emailBody;
-}
-
-
-function sendMail(from, to, subject,  htmlmsg)
-{
-    let transporter=nodemailer.createTransport(
-        {
-            host:"smtp.gmail.com",
-            port:587,
-            secure:false,
-            auth:
-            {
-             
-             
-    
-            }
-        }
-      );
-    let mailOptions=
-    {
-       from:from ,
-       to:to,
-       subject:subject,
-       html:htmlmsg
-    };
-    transporter.sendMail(mailOptions ,function(error,info)
-    {
-      if(error)
-      {
-        console.log(error);
-        emailFlag = 0;
-      }
-      else
-      {  emailFlag = 1;
-        console.log('Email sent:'+info.response);
-      }
-    });
-}
-
-let storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        try{
-            if(req.params.type == "room"){
-                DIR = './server/upload/room_pictures';
-            }
-            cb(null, DIR);
-        }catch{
-            cb(null, DIR);
-        }
-     
-    },
-    filename: (req, file, cb) => {
-      cb(null, file.fieldname + '-' + Date.now() + "-"+  file.originalname.split('@')[0] + '.' + "jpg");
-    }
-});
-let upload = multer({storage: storage});
-
-
-
-/*var client  = new MongoClient('mongodb+srv://:@deepak-adqsa.mongodb.net/ChatAppDB?retryWrites=true&w=majority', {useNewUrlParser:true,useUnifiedTopology: true});
+/*var client  = new MongoClient('', {useNewUrlParser:true,useUnifiedTopology: true});
 */
 var client  = new MongoClient('mongodb://localhost:27017/', {useNewUrlParser:true,useUnifiedTopology: true});
 client.connect((err, con)=>{
@@ -144,36 +66,31 @@ let rooms  = {"XyzaBc1Kzsxsw3" : univarsal}; //room lists room_name : members
 let userCount = 0;
 let id_to_email = {}; 
 io.on('connection',(client)=>{ 
-     userCount++;  
-    console.log("user connected " + userCount);    
-     
+    userCount++;  
+    console.log("user connected " + userCount);   
     client.on('join-room', (data)=>{
         //client sends request to join perticular room (room_name)
         //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
-        if(!rooms[data.room_name].hasOwnProperty('banList') || !rooms[data.room_name].banList.hasOwnProperty(data.email)){
-            client.join(data.room_name);
+        if(!rooms[data.room_name] || !rooms[data.room_name].hasOwnProperty('banList') || !rooms[data.room_name].banList.hasOwnProperty(data.email)){
+        client.join(data.room_name);
         client.currentRoom = data.room_name; //new property to client socket that tells current room
         id_to_email[client.id] = data.email; //didn't find use till now.
         let auda_or_rutba = (data.email == rooms[client.currentRoom].admin)?"admin" : "member";
         console.log(client.id + " joined " + client.currentRoom); 
        // console.log(rooms[client.currentRoom]);
-
         rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers + 1;
-
         rooms[client.currentRoom].memberDetails[client.id] = {memberName: data.memberName, memberPropic:"", member_role: auda_or_rutba};
         if(auda_or_rutba != 'admin')
        {
          client.emit('uniqueIdReceive', {unique_id : client.id}); //sending unique client id.
+
        }else{
            client.emit('uniqueIdReceive', {unique_id : client.id , setAdmin: 1, group:rooms[client.currentRoom].roomName});
        }
-
- 
-
         io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails}); 
-    }else{
+      }else{
         client.emit('rejected', {message:"Sorry can't join the room, seems like you are banned by the admin"});
-    }
+      }
         
     });
 
@@ -189,12 +106,10 @@ io.on('connection',(client)=>{
         if(rooms[client.currentRoom].admin == id_to_email[client.id]){
             if(!rooms[client.currentRoom].hasOwnProperty('banList')){
                 rooms[client.currentRoom]['banList'] = {};
-              
             }
             rooms[client.currentRoom]['banList'][id_to_email[data.id]] = 1;
             io.sockets.sockets[data.id].emit('banned', {ban:1, roomName:rooms[client.currentRoom].roomName, message:"you were removed by the admin"});
             io.sockets.sockets[data.id].disconnect();
-
             io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails}); 
         }
     });
@@ -203,7 +118,7 @@ io.on('connection',(client)=>{
         //console.log('user disconnected, client_id :' + client.id);  
         try{
             console.log("disconnected" + client.currentRoom + " id " + client.id);
-            //  console.log(client);
+            //console.log(client);
               delete rooms[client.currentRoom].memberDetails[client.id];
               rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers - 1;
               io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails});
@@ -212,7 +127,6 @@ io.on('connection',(client)=>{
         }catch{
             console.log("disconnectoin error for " + client.id);
         }
-       
     })
 });
 
@@ -229,7 +143,7 @@ app.post('/login', bodyParser.json(), (req, res)=>{
     var password = req.body.password;
     collection.find({email:email, password:password}).toArray((err, data)=> {
         if(!err && data.length>0){
-            if(data[0].auth==1){
+            if(data[0].auth==0){
                 var  fullname =  data[0].firstname + data[0].lastname;
                 res.send({status:true, data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender}}); 
             }else{
@@ -398,6 +312,31 @@ app.post("/create-room", bodyParser.json(), (req, res)=>{
     })
 });
 
+app.post("/save-room-changes/:roomId", bodyParser.json(), (req, res)=>{
+    try{
+        const roomId = req.params.roomId;
+        console.log(roomId);
+        console.log(rooms);
+        if(rooms.hasOwnProperty(roomId)){ 
+            const {roomName, roomDescription, roomCategory, roomPasswrod, roomPrivacy, roomPic} = req.body
+            rooms[roomId].roomName= roomName;
+            rooms[roomId].description = roomDescription;
+            rooms[roomId].category = roomCategory;
+            rooms[roomId].password = roomPasswrod;
+            rooms[roomId].type = roomPrivacy;
+            rooms[roomId].roomPic = roomPic;
+            let immediate = JSON.parse(JSON.stringify(rooms[roomId]));
+            delete immediate['admin'];
+            res.send({status:true, data:immediate});
+        }else{
+            res.send({status:false});
+        }
+    }catch(e){
+        console.error(e);
+        res.send({status:false});
+    } 
+});
+
 app.post('/get-available-rooms', bodyParser.json(), (req, res)=>{
     var data = [];
     if(req.body.all == 1){
@@ -464,3 +403,6 @@ app.post("/room_pictures/:type/:email", upload.single('profilePic',), (req, res)
        
       
 
+/* 
+ * add friends mechanism.
+ */

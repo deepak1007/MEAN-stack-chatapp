@@ -13,7 +13,7 @@ export class NormalpagesComponent implements OnInit {
     try{
       if(window.innerWidth <= 600){
         var navbtn = <HTMLElement><any> document.getElementsByClassName('nav-show-btn')[0];
-        navbtn.style.display = "block";
+        navbtn.style.display = "flex";
       }
    }catch{
 
