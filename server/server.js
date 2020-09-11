@@ -405,4 +405,66 @@ app.post("/room_pictures/:type/:email", upload.single('profilePic',), (req, res)
 
 /* 
  * add friends mechanism.
+<<<<<<< HEAD
  */
+
+app.post('/request-connection/:email',bodyParser.json(), async(req, res)=>{
+    try{     
+        const userEmail = req.params.email;
+        const friendId = req.body.connectToId;
+        var collection = connectedObj.db(Dbname).collection('users');
+        const userData = await collection.find({email:userEmail}).toArray();
+        if(!userData.length) throw new Error("user Data not present");
+        
+        let _idUser = userData._id;
+        console.log(userData);
+        console.log(_idUser);
+        var data = await collection.updateOne({_id : friendId },{$push: {"requests": {friendId: _idUser}}});
+
+        if(data.nModified == 0) throw new Error("sorry could andd the connection");   
+             
+        
+        res.send({
+            status: 200,
+            message: "request was sent"
+        });
+
+    }catch(e){
+        console.error(e);
+        res.send({
+            status:300,
+            message:"sorry request wasn't sent"
+        });
+    }  
+})
+app.post('/add-friend/:email',bodyParser.json(), async(req, res)=>{
+    try{     
+        const userEmail = req.params.email;
+        const friendId = req.body.connectToId;
+        var collection = connectedObj.db(Dbname).collection('users');
+        var data = await collection.updateOne({email:userEmail},{$push: {"connections": {friendId: friendId, friend: true,     blocked:false}}});
+        if(data.nModified == 0) throw new Error("sorry could andd the connection");   
+            
+        
+        res.send({
+            status: 200,
+            message: "new connection was added"
+        })
+    }catch(e){
+        console.error(e);
+        res.send({
+            status:300,
+            message:"sorry could add the connection"
+        });
+    }
+    
+})
+
+
+app.get("/get", bodyParser.json(), async(req, res)=>{
+    var collection = connectedObj.db(Dbname).collection('users');
+    const userData = await collection.find({"_id": "5eeadc0b49f19640bb90baf0"}).toArray();
+
+    res.send({data: userData});
+})
+

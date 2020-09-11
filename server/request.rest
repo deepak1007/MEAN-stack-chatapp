@@ -4,4 +4,21 @@ Content-Type: application/json
 {
     "email" : "email@gmail.com",
     "password" : "11111111"
+<<<<<<< HEAD
 }
+=======
+}
+
+### friend request 
+
+POST http://localhost:8000/request-connection/email@gmail.com
+Content-Type: application/json
+
+{
+    "connectToId": "4b3cf381d7af9110d48b2585" 
+}
+
+
+###
+GET http://localhost:8000/get
+>>>>>>> addfriend
