@@ -68,7 +68,10 @@ export class DataService {
   createRoomOnServer(data){
     return this.httpclient.post('http://localhost:8000/create-room', data);
   }
-
+  
+  saveRoomChangesOnServer(data, roomCode){
+    return this.httpclient.post('http://localhost:8000/save-room-changes/' + roomCode,data);
+  }
 
   getRooms(option){
     return this.httpclient.post('http://localhost:8000/get-available-rooms', option);

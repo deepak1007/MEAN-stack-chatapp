@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input,HostListener, ElementRef, Renderer2, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -7,8 +7,22 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
+  toggle:Boolean = false;
+  @ViewChild('nav_btn')
+  nav_btn: ElementRef;
 
-  constructor() { }
+  @HostListener('window:resize')
+  checkWindowSize(e){
+    if(window.innerWidth > 600){
+     this.ren.setStyle(this.nav_btn.nativeElement, 'display', 'none');
+    }else{
+      this.toggle = false;
+      this.ren.setStyle(this.nav_btn.nativeElement, 'display', 'flex')
+    }
+  }
+
+  
+  constructor(private ren:Renderer2 , private el: ElementRef) { }
 
   ngOnInit(): void {
   
@@ -18,14 +32,12 @@ export class HeaderComponent implements OnInit {
     var secondheader =  <HTMLElement><any> document.getElementsByClassName("second-header")[0];
     if(secondheader.style.display == "none")
     {   
-        var nav_btn = <HTMLElement><any> document.getElementsByClassName("nav-show-btn")[0];
-        nav_btn.textContent ="X";
+        this.toggle = !this.toggle;
         secondheader.style.display = "block";
         
     }
     else{
-      var nav_btn = <HTMLElement><any> document.getElementsByClassName("nav-show-btn")[0];
-        nav_btn.textContent ="=";
+      this.toggle = !this.toggle;
       secondheader.style.display = "none";
     }
   }

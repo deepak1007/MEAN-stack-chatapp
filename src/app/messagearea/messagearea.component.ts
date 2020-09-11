@@ -18,6 +18,7 @@ export class MessageareaComponent implements OnInit {
   members = {};
   messageObserver;
   banObserver;
+  SelectedRoomPic;
 
   chat_name;
   mod;
@@ -27,7 +28,8 @@ export class MessageareaComponent implements OnInit {
   roomCategory;
   roomPrivacy;
   roomPic;
-  roomMembers
+  roomMembers;
+  roomPass
   group=1;
   loadingMeme=0;
   random=0;
@@ -47,27 +49,36 @@ export class MessageareaComponent implements OnInit {
   
     this.chatService.openConnection();
     
- 
+    
     this.ar.queryParamMap.subscribe((data:any)=>{
-
       if(localStorage.getItem('email')){
         this.Httpc.get('http://localhost:8000/get-details/'+localStorage.getItem('email')).subscribe((resp:any)=>{
           if(resp.status == "200")
           {
-            this.ds.filldetails(resp.data);
-            this.roomDescription = data.get('description');
-            this.roomCategory = data.get('category');
-            this.roomPassword = data.get('password');
-            this.chat_name = data.get('roomName');
-            this.mod = data.get('createdBy');
-            this.roomPrivacy = data.get('type');
-            this.roomCode = data.get('roomCode');
-            this.roomPic = data.get('roomPic');
-            this.roomMembers = data.get('roomMembers');
-            if(data.get('random')==1){
-              this.random = 1;
-            }
-             this.chatService.join_room(this.roomCode, this.ds.details.FullName);//Joins the room and provides user's name function in chat-services.
+             this.ds.filldetails(resp.data);
+
+             this.Httpc.get('http://localhost:8000/room-by-code/'+ data.get('roomCode')).subscribe((res:any)=>{
+              if(res.status == true){
+                  this.roomDescription = res.data['description'];
+                  this.roomCategory = res.data['category'];
+                  this.roomPassword = res.data['password'];
+                  this.chat_name = res.data['roomName'];
+                  this.mod = res.data['createdBy'];
+                  this.roomPrivacy = res.data['type'];
+                  this.roomCode = res.data['roomCode'];
+                  this.roomPic = res.data['roomPic'];
+                  this.roomMembers = res.data['roomMembers'];
+                  this.random = data.get('random');
+                  this.chatService.join_room(this.roomCode, this.ds.details.FullName); 
+                  this.ds.spinnerControl('hide');
+              }
+            },(err)=>{
+              console.log(err);
+              this.ds.spinnerControl('hide');
+            },()=>{
+              console.log("completed");
+            });
+            //Joins the room and provides user's name function in chat-services.
             this.ds.spinnerControl('hide');
 
           }
@@ -102,6 +113,7 @@ export class MessageareaComponent implements OnInit {
           this.router.navigate(['/chat-dashboard/chat']);
         }
     });
+     
 
     function headershowhide(){
       //if computer view then show side nav and header but for mobile view hide both...
@@ -130,7 +142,7 @@ export class MessageareaComponent implements OnInit {
 
    
     
-  }
+    }
    
   ngOnDestroy(): void {
     var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
@@ -164,6 +176,16 @@ export class MessageareaComponent implements OnInit {
     return localStorage.getItem('uniqueChatId');//check whether the message belongs to self or to others
   }
 
+  isAdmin(){
+    if(localStorage.getItem(this.chat_name) == this.getPublicId()){
+      console.log("yes");
+      return 1;
+    }else{
+      console.log('no')
+      return 0;
+    }
+  }
+
   scrollToBottom(){
        var chat_messages = <HTMLElement><any>document.getElementsByClassName('chat-messages')[0];
        chat_messages.scrollTop = chat_messages.scrollHeight;
@@ -175,13 +197,7 @@ export class MessageareaComponent implements OnInit {
     this.router.navigate(['/chat-dashboard/view-profile'], {queryParams: {id : id}});
   }
 
-  isAdmin(){
-    if(localStorage.getItem(this.chat_name) == this.getPublicId()){
-      return 1;
-    }else{
-      return 0;
-    }
-  }
+  
   
   showGroupMenu(e){
     e.preventDefault();
@@ -240,5 +256,66 @@ export class MessageareaComponent implements OnInit {
      img.setAttribute('src', src );
      e.target.style.display= "none";
    }
+
+   fileSelectAndUpload(event)
+    { 
+      this.ds.spinnerControl('show');
+      this.SelectedRoomPic = event.target.files[0];
+      var fd = new FormData();
+      fd.append("profilePic", this.SelectedRoomPic, localStorage.getItem('email'));
+      this.Httpc.post("http://localhost:8000/room_pictures/room/"+ localStorage.getItem('email'),fd).subscribe((res:any)=>{    console.log(res);
+        if(res.success == true){
+        this.roomPic = res.roomPic_src;
+        this.ds.spinnerControl('hide');
+      }else{
+        this.ds.spinnerControl('hide');
+        alert('sorry some error occurred');
+      }
+     
+   });
+  }
+
+  changePrivacy(e){
+    this.roomPrivacy = e.target.options[e.target.selectedIndex].value;
+  }
+
+  save_room_changes(){
+    this.ds.spinnerControl('show');
+    var data = {
+      creator:localStorage.getItem('email'),
+      roomName:this.chat_name,
+      roomDescription:this.roomDescription, 
+      roomCategory:this.roomCategory, 
+      roomPassword:this.roomPassword, 
+      roomPrivacy:this.roomPrivacy, 
+      roomPic:this.roomPic||"../../assets/45653808_553438705081091_2716345778523078656_o.png",
+      roomMembers:this.roomMembers, 
+    };
+    this.ds.saveRoomChangesOnServer(data, this.roomCode).subscribe((resp:any)=>{
+      if(resp.status==true){
+        let data = resp.data;
+        this.roomDescription = data.description;
+        this.roomCategory = data.category;
+        this.roomPassword = data.password
+        this.chat_name = data.roomName;
+        this.roomPrivacy = data.type;
+        this.roomPic = data.roomPic;
+      
+        this.ds.spinnerControl('close');
+        //alert('room has been created');
+        //data['random'] = 0;
+        //this.router.navigate(['/chat-dashboard/message-area'],/{queryParams:data});  
+      }
+      else{
+        this.ds.spinnerControl('hide');
+        alert("sorry some error occured, Room was not created");
+        
+      }
+      
+    },(err)=>{
+      this.ds.spinnerControl('hide');
+      alert("Not Found");
+    });
+  }
 
 }

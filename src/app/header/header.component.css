@@ -1,6 +1,4 @@
-.container-fluid{
 
-}
 
 .top-header{
     display:flex;
@@ -21,6 +19,7 @@ h3{
 .toggle-btn {
   display:none;
 }
+
 .second-header ul {
     justify-content: space-between;
 }
@@ -39,6 +38,9 @@ h3{
      letter-spacing:1px;
 }
 
+.nav-show-button {
+    transition:0.4s;
+}
 
 @media screen and (max-width:600px){
     
@@ -48,32 +50,47 @@ h3{
         z-index:1111;
     }
     
-    .toggle-btn{
-       display:block;
-    }
-    .toggle-btn{
-        font-size: 20px;
-        font-weight: bolder;
-    }
-
-    .second-header {
-        display:none;
-        height:100vh;
-    }
-    .second-header ul{
-        margin-top:20px;
+    .toggle-on-btn{
+        height:25px;
+        width:30px;
+        display:flex;
         flex-direction:column;
-    }
-    .second-header ul div{
-        display:block;
+        justify-content: space-evenly;
+        align-items: center;
+        position:relative;
+        
     }
 
-    .second-header ul div li{
-        padding:6px 10px;
-        font-size:20px;
+    .toggle-on-btn span{
+        content: " ";
+        display:block;
+        width:25px;
+        height:3px;
+        background:black;
+        transition: 0.2s ease-in;
     }
-    .second-header ul div li:hover{
-        background:green;
+
+
+    .toggle-off-btn {
+        display:block;
+        position:relative;
+    }
+    .toggle-off-btn span{
+        position:absolute;
+        top:50%;
+        transform-origin: center;
+        transform:translateY(-50%);
+        
+    }
+    .toggle-off-btn span:nth-child(2){
+       display:none;
+    }
+    .toggle-off-btn span:nth-child(1){
+         transform:  rotate(45deg);
+    }
+    .toggle-off-btn span:nth-child(3){
+        transform: rotate(-45deg);
+        z-index:2;
     }
 
     .text {

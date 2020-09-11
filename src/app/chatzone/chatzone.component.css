@@ -4,11 +4,12 @@
 }
 
 .main{
-    background: url('../../assets/5267.jpg');
+    /*background: url('../../assets/5267.jpg');
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: contain;*/
+    background:#ebebeb;
     height:100vh;
     width:100%;
     overflow-y:auto;

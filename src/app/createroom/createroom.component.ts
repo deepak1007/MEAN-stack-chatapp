@@ -33,11 +33,13 @@ export class CreateroomComponent implements OnInit {
     this.ds.createRoomOnServer(data).subscribe((response:any)=>{
       if(response.status==true){
         data = response.data;
-      
+        
         this.ds.spinnerControl('close');
         alert('room has been created');
         data['random'] = 0;
+        console.log("hello");
         this.router.navigate(['/chat-dashboard/message-area'],{queryParams:data});  
+        console.log("hello");
       }
       else{
         this.ds.spinnerControl('hide');

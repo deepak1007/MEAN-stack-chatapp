@@ -55,7 +55,7 @@ export class ChatServiceService {
   public removeMember(data){
     this.clientIO.emit('member_remove_req', data);
   }
-  
+   
   
    public rejected(){
      return Observable.create((observer)=>{

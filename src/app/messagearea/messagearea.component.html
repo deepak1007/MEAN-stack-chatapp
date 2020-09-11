@@ -25,6 +25,7 @@
            </div>
           <div class="details">
             <!-- Nav tabs -->
+            <div  class="settings" >
             <ul class="nav nav-tabs justify-content-center">
               <li class="nav-item">
                 <a class="nav-link active px-3" data-toggle="tab" href="#Members">Manage Members</a>
@@ -33,24 +34,88 @@
                 <a class="nav-link px-3" data-toggle="tab" href="#group">Manage Group</a>
               </li>
             </ul>
+          </div>
             
             <!-- Tab panes -->
             <div class="tab-content">
               <div class="tab-pane container active" id="Members">
                 <div class='member-controls'>
-                  
-                        <ul class='list' *ngFor="let member of members  | keyobject">
-                          <li><span class="status online"></span></li>
-                         <!-- <li><img [src]="member.proPic" style='width:30px;height:30px; border-radius: 50%;' alt=""></li>-->
+                        <table class='table'>
+                          <tr>
+                            <th>#</th>
+                            <th>type</th>
+                            <th>name</th>
+                            <th>options</th>
+                          </tr>
+                          <tr *ngFor="let member of members  | keyobject">
+                            <td><span class="status online"></span></td>
+                            <td>{{ member.value.member_role }}</td>
+                            <td>{{ member.value.memberName }}</td>
+                            <td><span (click)='removeMember(member.key)' *ngIf='random && member.key != getPublicId() && isAdmin()' style="color:red; cursor:pointer; display:block;">ban</span></td>
+                          </tr>
+                        </table>
+                        <!--<ul class='list' *ngFor="let member of members  | keyobject">
+                          <li></li>
+                          <li><img [src]="member.proPic" style='width:30px;height:30px; border-radius: 50%;' alt=""></li>
                          <li>{{ member.value.member_role}}</li>
                           <li>{{ member.value.memberName }}</li>
-                          <li (click)='removeMember(member.key)'><span *ngIf='!random && member.key != getPublicId() && isAdmin()' style="color:red; cursor:pointer">ban</span></li>
-                       </ul>
+                          
+                       </ul>-->
                 </div>
               </div>
               <div class="tab-pane container fade" id="group"> 
 
-                <app-createroom></app-createroom>
+                <div class="create-room py-5 px-m-5 pt-1">
+                  <h2 class='text-center mb-3'><small>Enter Room Details</small></h2>
+                  <div class="profile-pic mb-2">
+                      <img [src]="roomPic" alt="">
+      
+                      <input 
+                         type="file" 
+                         name="roompic" 
+                         id="roompic" 
+                         accept="image/png" 
+                         #imageFile
+                         (change)="fileSelectAndUpload($event)"
+                       >
+                         
+                      <div class='blur-bg'>
+                       <div class="btn" id='profilepicuploader' (click)="imageFile.click()">+</div>
+                      </div>
+                  </div>
+                  <form action="" #createRoom='ngForm' class="form">
+                      <div class="form-group room-name">
+                          <label for="roomName" class='form-label'>Enter Room Name:</label><span class='error' *ngIf='name.invalid && name.touched'>*please enter the room name</span>
+                          <input type="text" name='roomName' class='form-control' required [(ngModel)]="chat_name" #name="ngModel" ngModel>
+                      </div>
+                      <div class="form-group room-cat">
+                          <label for="roomName" class='form-label'>Enter Room Category:</label><span class='error' *ngIf='cat.invalid && cat.touched'>*please enter the room Category</span>
+                          <input type="text" name='roomCat' class='form-control' required [(ngModel)]="roomCategory" #cat="ngModel" ngModel>
+                      </div>
+                      <div class="form-group">
+                          <label for="description" class='form-label'>Enter Room Description:</label><span class='error' *ngIf='des.invalid && des.touched'>*please enter a short Description</span>
+                          <textarea name="description"  cols="30" rows="4" class='form-control' placeholder="" required #des='ngModel' [(ngModel)]="roomDescription"  ngModel></textarea>
+                      </div>
+                      <div *ngIf="roomPrivacy == 'private'" class="form-group">
+                          <label for="roomPass" class='form-label'>Enter Room Password:</label><span class='error' *ngIf='pass.invalid && pass.touched'>*please enter the room Password</span>
+                          <input type="password" name='roomPass' class='form-control' required minlength='8' [(ngModel)]="roomPass" #pass="ngModel" ngModel>
+                      </div>
+  
+                      <div class="form-group" >
+                          <label for="privacy" class='form-label'>Privacy:</label>
+                          <select name="privacy" (change)="changePrivacy($event)" class='form-control'>
+                              <option value="public">Select room type (default public)</option>
+                              <option value="public" [selected]='roomPrivacy == "public"'>Public</option>
+                              <option value="private" [selected]='roomPrivacy == "private"'>Private</option>
+                          </select>
+                      </div>
+  
+                      <div class="save-btn text-center">
+                         <button class="btn btn-success mt-3 px-3 py-2" [disabled]='createRoom.invalid' (click)='save_room_changes()'>Save Changes</button>
+                      </div>
+                      
+                  </form>
+              </div>
 
               </div>
 

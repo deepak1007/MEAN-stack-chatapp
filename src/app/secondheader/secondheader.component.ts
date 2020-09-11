@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { DataService } from '../data.service';
 
 @Component({
@@ -8,14 +8,20 @@ import { DataService } from '../data.service';
 })
 export class SecondheaderComponent implements OnInit {
   loginsignupshowhide;
-  constructor(private ds: DataService) { }
+
+  @ViewChild('header')
+  header:ElementRef;
+
+  constructor(private ds: DataService, private ren: Renderer2, private el: ElementRef) { }
 
   ngOnInit(): void {
-    if(window.innerWidth <=600){
-      var secondheader =  <HTMLElement><any> document.getElementsByClassName("second-header")[0];
-      secondheader.style.display = "none"
-    }
     this.loginsignupshowhide = this.ds.authenticationCheck();
+  }
+
+  ngAfterViewInit(): void{
+    if(window.innerWidth <= 600){
+      this.ren.setStyle(this.header, 'display', 'none');
+    }
   }
 
 }

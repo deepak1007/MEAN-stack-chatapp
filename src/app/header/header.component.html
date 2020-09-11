@@ -1,11 +1,15 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12 top-header py-1 bg-light text-dark">
+        <div class="col-12 top-header bg-light py-1 text-dark">
             <div class="logo"><h3><small>ChatApp</small></h3></div>
             <div class="text">
                 <span class='badge badge-pill mt-1 badge-pill-small bg-success'>&nbsp;</span><i>meet stranges online</i>
             </div>
-            <div class="btn toggle-btn nav-show-btn" (click)="showsidenav()">=</div>
+            <div class="toggle-on-btn nav-show-btn" [class.toggle-off-btn]="toggle" (click)="showsidenav()" #nav_btn>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </div>
 </div>

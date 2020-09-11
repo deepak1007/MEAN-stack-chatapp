@@ -9,7 +9,7 @@
    
 }
 .row{
-    background:rgba(255,255,255,0.95);
+  
 }
 .category-container{
     position:absolute;
@@ -59,9 +59,9 @@
     text-align: center;
 }
 
-.join-group:hover .text p{
+.join-group .text p{
     transition:1.2s;
-    background:green !important;
+    background:green;
     
 }
 
@@ -81,12 +81,11 @@ h3 {
     width:42%;
 }
 
-.make-room:hover .text p {
+.make-room .text p {
     background:peru !important;
 }
 
-.enter-room:hover .text p{
-    
+.enter-room .text p{
     background: blueviolet !important;
 }
 @media screen and (max-width:900px){
