@@ -14,6 +14,9 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
 import { CreateroomComponent } from './createroom/createroom.component';
 import { SearchroomsComponent } from './searchrooms/searchrooms.component';
 import { VerifyaccountComponent } from './verifyaccount/verifyaccount.component';
+import { ConnectionsComponent } from './connections/connections.component';
+import { AddedConnectionsComponent } from './added-connections/added-connections.component';
+import { PrivateChatComponent } from './private-chat/private-chat.component';
 
 
 const routes: Routes = [
@@ -33,9 +36,12 @@ const routes: Routes = [
     {path:'profile', component:ProfileComponent},
     {path:'chat', component:ChatComponent},
     {path:'message-area', component:MessageareaComponent},
+    {path:'private-chat', component: PrivateChatComponent},
     {path:'view-profile', component:ViewProfileComponent},
     {path:'create-room', component:CreateroomComponent},
-    {path:'search-room', component:SearchroomsComponent}
+    {path:'search-room', component:SearchroomsComponent},
+    {path:"manage-requests", component:ConnectionsComponent},
+    {path:"manage-connections", component:AddedConnectionsComponent}
   ]}, 
  
 

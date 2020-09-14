@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +20,7 @@ export class DataService {
     this.details.about = data.about;
     this.details.gender = data.gender;
     console.log(this.details);
-  }
+  }   
 
 
   detailsFiller(){
@@ -86,7 +87,14 @@ export class DataService {
     }
   }
 
-
+  
+  send_request(connectToId){
+    const data  = {
+      connectToId : connectToId
+    }
+    console.log("hello");
+    return this.httpclient.post('http://localhost:8000/request-connection/' + localStorage.getItem('email'), data);
+  }
 
 
 }

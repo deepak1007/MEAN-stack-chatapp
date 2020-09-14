@@ -16,7 +16,26 @@ Content-Type: application/json
     "connectToId": "4b3cf381d7af9110d48b2585" 
 }
 
+###
+POST http://localhost:8000/add-friend/email@gmail.com
+Content-Type: application/json
+
+{
+    "connectToId": "4b3cf381d7af9110d48b2585" 
+}
 
 ###
 GET http://localhost:8000/get
 
+
+
+###
+
+GET http://localhost:8000/get-connection-list/email@gmail.com
+
+###
+GET http://localhost:8000/get-requests-list/just@gmail.com
+
+
+###
+GET http://localhost:8000/view-profile/null/just@gmail.com

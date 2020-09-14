@@ -15,7 +15,7 @@ export class ChatzoneComponent implements OnInit {
       
     var navbtn = <HTMLElement><any> document.getElementsByClassName('nav-show-btn')[0];
     navbtn.style.display = "none";
-
+    
 
   }
 

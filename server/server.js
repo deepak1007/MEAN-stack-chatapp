@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 const sendMail = require('./mail').sendMail;
 const buildLink = require('./mail').buildLink;
 const upload = require('./multerConfig'); 
+const { connection } = require('mongoose');
 //const http = require('http');
 
 
@@ -61,14 +62,17 @@ app.use(cors());
 
 //socket---------------------------------------------->
 var univarsal = {roomName: "General", createdBy: "admin", description:"Random Group for Everyone", category:"general", type:"public", password:"",roomPic:'../../assets/icons/Infinity-1.9s-221px.png', roomCode:"XyzaBc1Kzsxsw3", roomLink:'http://localhost:4200/chat-dashboard/message-area',admin:"", roomMembers:0, memberDetails:{}};
-
 let rooms  = {"XyzaBc1Kzsxsw3" : univarsal}; //room lists room_name : members
 let userCount = 0;
 let id_to_email = {}; 
+
+
+let private = {}
+
 io.on('connection',(client)=>{ 
     userCount++;  
     console.log("user connected " + userCount);   
-    client.on('join-room', (data)=>{
+    client.on('join-room', async (data)=>{
         //client sends request to join perticular room (room_name)
         //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
         if(!rooms[data.room_name] || !rooms[data.room_name].hasOwnProperty('banList') || !rooms[data.room_name].banList.hasOwnProperty(data.email)){
@@ -80,6 +84,10 @@ io.on('connection',(client)=>{
        // console.log(rooms[client.currentRoom]);
         rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers + 1;
         rooms[client.currentRoom].memberDetails[client.id] = {memberName: data.memberName, memberPropic:"", member_role: auda_or_rutba};
+
+       // const collection = connectedObj.db(Dbname).collection('users');
+       // const userData  = await collection.find({email:email}).toArray();
+       // userUniqueId = userData[0]._id;
         if(auda_or_rutba != 'admin')
        {
          client.emit('uniqueIdReceive', {unique_id : client.id}); //sending unique client id.
@@ -96,15 +104,28 @@ io.on('connection',(client)=>{
 
  
     client.on("create-message",(data)=>{
-         data['from_id'] = client.id; //inserts the message's form_id in the incoming data.
+         //inserts the message's form_id in the incoming data.
         // io.sockets.emit("new-message", JSON.stringify(data));
-         io.sockets.in(client.currentRoom).emit("new-message", JSON.stringify(data));  
+
+        /* for private msg no client.id */
+        room = client.currentRoom;
+         if(!data.hasOwnProperty('toPrivate')){
+            data['from_id'] = client.id;
+            console.log(1);
+         }
+         else {
+            room = client.uniqueId;
+            io.sockets.sockets[client.id].emit("new-message", JSON.stringify(data));
+         }
+         
+
+         io.sockets.in(room).emit("new-message", JSON.stringify(data));  
     });
-    
+     
     client.on('member_remove_req', (data)=>{ 
-        admin_id = client.id;
+        admin_id = client.id; 
         if(rooms[client.currentRoom].admin == id_to_email[client.id]){
-            if(!rooms[client.currentRoom].hasOwnProperty('banList')){
+            if(!rooms[client.currentRoom].hasOwnProperty('banList')){ 
                 rooms[client.currentRoom]['banList'] = {};
             }
             rooms[client.currentRoom]['banList'][id_to_email[data.id]] = 1;
@@ -128,6 +149,31 @@ io.on('connection',(client)=>{
             console.log("disconnectoin error for " + client.id);
         }
     })
+
+
+//private messages
+
+ client.on('join-private', async(metaData)=>{
+    try{
+     const { senderId, receiverId } = metaData;
+     console.log(metaData);
+     private[senderId] = {
+         receiverId : receiverId,
+         messageBuffer: {
+             to: [],
+             from:[],
+         }
+     }
+     client.join(receiverId);
+     client.currentRoom = receiverId;
+     client.uniqueId = senderId;
+     const collection = connectedObj.db(Dbname).collection('users');
+     const data = await collection.find({_id : ObjectId(receiverId)},{projection:{_id: 1, firstname:1, lastname:1}}).toArray();
+     io.sockets.in(client.currentRoom).emit("connected", data[0]);
+    }catch(e){
+     io.sockets.in(metaData.receiverId).emit("error");
+    }
+ });    
 });
 
 
@@ -145,7 +191,7 @@ app.post('/login', bodyParser.json(), (req, res)=>{
         if(!err && data.length>0){
             if(data[0].auth==0){
                 var  fullname =  data[0].firstname + data[0].lastname;
-                res.send({status:true, data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender}}); 
+                res.send({status:true, data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender, uniqueUserId: data[0]._id}}); 
             }else{
                 res.send({status:false, data:{err:"please verify your account first with the link in your email"}})
             }
@@ -271,13 +317,31 @@ app.get("/profile-picture/:email", bodyParser.json(), (req, res)=>{
      })
 });
 
-app.get("/view-profile/:id", bodyParser.json(), (req,res)=>{
+app.get("/view-profile/:id/:userDbId", bodyParser.json(), (req,res)=>{
+    
     var collection = connectedObj.db(Dbname).collection('users');
-    var email = id_to_email[req.params['id']];
-    collection.find({email:email}).toArray((err,data)=>{
+    let email;
+    let _id;
+    let queryObj;
+
+
+    if(req.params.id != "false"){
+        email = id_to_email[req.params['id']];  
+        queryObj = {
+            email: email
+        }
+    }else{
+        _id = req.params.userDbId;
+        queryObj = {
+            _id : ObjectId(_id)
+        }
+    }
+     
+    
+    collection.find(queryObj).toArray((err,data)=>{
         if(!err && data.length>0){
             var fullname = data[0].firstname + " " + data[0].lastname;
-            res.send({status:true , data:{FullName:fullname ,about:data[0].about||"", gender:data[0].gender||'', proPic_src:  data[0].proPic}});
+            res.send({status:true , data:{FullName:fullname ,about:data[0].about||"", gender:data[0].gender||'', proPic_src:  data[0].proPic, _id: data[0]._id}});
         }
         else{
             res.status(404).send({status:false, data:{errMsg: "sorry no data found"}});
@@ -405,7 +469,6 @@ app.post("/room_pictures/:type/:email", upload.single('profilePic',), (req, res)
 
 /* 
  * add friends mechanism.
-<<<<<<< HEAD
  */
 
 app.post('/request-connection/:email',bodyParser.json(), async(req, res)=>{
@@ -413,13 +476,11 @@ app.post('/request-connection/:email',bodyParser.json(), async(req, res)=>{
         const userEmail = req.params.email;
         const friendId = req.body.connectToId;
         var collection = connectedObj.db(Dbname).collection('users');
-        const userData = await collection.find({email:userEmail}).toArray();
-        if(!userData.length) throw new Error("user Data not present");
+        const userData = await collection.findOne({email:userEmail});
+        if(!userData) throw new Error("user Data not present");
         
         let _idUser = userData._id;
-        console.log(userData);
-        console.log(_idUser);
-        var data = await collection.updateOne({_id : friendId },{$push: {"requests": {friendId: _idUser}}});
+        var data = await collection.updateOne({_id:  ObjectId(friendId)},{$push: {"requests": {friendId:_idUser}}});
 
         if(data.nModified == 0) throw new Error("sorry could andd the connection");   
              
@@ -441,14 +502,21 @@ app.post('/add-friend/:email',bodyParser.json(), async(req, res)=>{
     try{     
         const userEmail = req.params.email;
         const friendId = req.body.connectToId;
+        const userId = req.body.ownId;
         var collection = connectedObj.db(Dbname).collection('users');
-        var data = await collection.updateOne({email:userEmail},{$push: {"connections": {friendId: friendId, friend: true,     blocked:false}}});
-        if(data.nModified == 0) throw new Error("sorry could andd the connection");   
+        var data = await collection.updateOne({email:userEmail},{$push: {"connections": {friendId: ObjectId(friendId)}}});
+
+        var data = await collection.updateOne({_id: ObjectId(friendId)},{$push: {"connections": {friendId: ObjectId(userId)}}});
+
+        if(data.nModified == 0) throw new Error("sorry could and the connection");   
             
+        var data = await collection.updateOne({email:userEmail},{"$pull": {"requests": {"friendId": ObjectId(friendId)}}});
         
+        console.log(data);
         res.send({
             status: 200,
-            message: "new connection was added"
+            message: "new connection was added",
+            data 
         })
     }catch(e){
         console.error(e);
@@ -460,10 +528,88 @@ app.post('/add-friend/:email',bodyParser.json(), async(req, res)=>{
     
 })
 
+app.get('/get-requests-list/:email', bodyParser.json(), async(req, res)=>{
+    try{
+       const userEmail = req.params.email;
+       let collection = connectedObj.db(Dbname).collection('users');
+       const userData = await collection.findOne({email: userEmail});
+       const requestList = userData.requests;
+       if(!requestList.length) throw new Error("no friends");
+    
+       const requestIds = [];
+       if(requestList instanceof Array){
+           requestList.forEach(x => {
+               if(!x.friendId) return;               
+               requestIds.push(ObjectId(x.friendId));
+           });
+
+           const requestListWithDetails = await collection.find({_id: {$in: requestIds}},{ projection :{'firstname':1 , 'lastname':1, 'proPic':1 , 'about': 1, '_id':1}}).toArray();
+           if (requestListWithDetails.length > 0)
+           res.status(200).send({
+               status:200, 
+               message:"connection requests", 
+               data:requestListWithDetails
+            });
+           else
+           res.status(200).send({ 
+               status:false,
+               message:"sorry no data received",
+               data:null
+           });
+       }
+    }catch(e){
+        console.error(e);
+        res.status(200).send({
+            status:false,  
+            message:"there was an error in retrieving connection requests", 
+            data:null
+        });
+    }
+})
+
+
+app.get('/get-connection-list/:email', bodyParser.json(), async(req, res)=>{
+    try{
+       const userEmail = req.params.email;
+       let collection = connectedObj.db(Dbname).collection('users');
+       const userData = await collection.findOne({email: userEmail});
+       const connectionList = userData.connections;
+       if(!connectionList.length) throw new Error("no friends");
+    
+       const connectionIds = [];
+       if(connectionList instanceof Array){
+           connectionList.forEach(x => {
+               if(!x.friendId) return;               
+               connectionIds.push(ObjectId(x.friendId));
+           });
+
+           const connectionListWithDetails = await collection.find({_id: {$in: connectionIds}},{ projection :{'firstname':1 , 'lastname':1, 'proPic':1 , 'about': 1, '_id':1}}).toArray();
+           
+           if (connectionListWithDetails.length > 0)
+           res.status(200).send({
+               status:200, 
+               message:"connection requests", 
+               data:connectionListWithDetails
+            });
+           else
+           res.status(200).send({ 
+               status:false,
+               message:"sorry no data received",
+               data:null
+           });
+       }
+    }catch(e){
+        res.status(200).send({
+            status:false, 
+            message:"there was an error in retrieving connection requests", 
+            data:null
+        });
+    }
+})
 
 app.get("/get", bodyParser.json(), async(req, res)=>{
     var collection = connectedObj.db(Dbname).collection('users');
-    const userData = await collection.find({"_id": "5eeadc0b49f19640bb90baf0"}).toArray();
+    const userData = await collection.find({email: "just@gmail.com"}).toArray();
 
     res.send({data: userData});
 })

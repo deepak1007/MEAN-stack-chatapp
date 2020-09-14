@@ -4,6 +4,8 @@
             <ul class='navigaton-links-container'>
                 <li class="flex-item"  routerLink='profile' (click)="changecolor(0)" ><i class="fa fa-user" (click)="changecolor(0)" [ngStyle]="{'color':colorselected[0]}" aria-hidden="true"></i> <p class='show-hide-text'>Profile</p> </li>
                 <li class="flex-item" routerLink='chat' (click)="changecolor(1)"><i class="fa fa-comments" (click)="changecolor(1)" [ngStyle]="{'color':colorselected[1]}" aria-hidden="true"></i> <p class='show-hide-text'>Chat</p> </li>
+                <li class="flex-item" routerLink='manage-requests' (click)="changecolor(1)"><i class="fa fa-comments" (click)="changecolor(1)" [ngStyle]="{'color':colorselected[1]}" aria-hidden="true"></i> <p class='show-hide-text'>Requests</p> </li>
+                <li class="flex-item" routerLink='manage-connections' (click)="changecolor(1)"><i class="fa fa-comments" (click)="changecolor(1)" [ngStyle]="{'color':colorselected[1]}" aria-hidden="true"></i> <p class='show-hide-text'>Connections</p> </li>
                 <li class="flex-item" (click)='logout()'><i class="fa fa-sign-out" (click)="changecolor(2)" [ngStyle]="{'color':colorselected[2]}" aria-hidden="true"></i><p class='show-hide-text'>Logout</p></li>
             </ul>    
         </div>

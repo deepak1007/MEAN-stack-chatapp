@@ -44,6 +44,7 @@ export class ChatServiceService {
     this.clientIO.emit('join-room', {room_name:room_name, memberName:memberName, email:localStorage.getItem('email')});
     this.clientIO.on('uniqueIdReceive', (unique_id)=>{//takes the unique id of the socket fills it in local storage.
       localStorage.setItem('uniqueChatId', unique_id.unique_id);//unique id for identification of message belongingness.
+     // localStorage.setItem('uniqueDataBaseId', unique_id.uniqueUserId);//for profile links
       if(unique_id.hasOwnProperty('setAdmin') && unique_id.setAdmin == 1){
         localStorage.setItem(unique_id.group, unique_id.unique_id);
       }
@@ -74,6 +75,21 @@ export class ChatServiceService {
   closeSocket(){
     this.clientIO.disconnect();
   }
+  
+  public privateConnect = (receiverId)=>{
+
+      return Observable.create((observer)=>{
+        this.clientIO.emit('join-private',{senderId:localStorage.getItem('userUniqueId'), receiverId:receiverId});
+        this.clientIO.on('connected', (data)=>{
+          observer.next(data);
+        });
+      });
+    
+  }
+
+
+
+  
 
 
 }

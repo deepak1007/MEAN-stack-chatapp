@@ -24,6 +24,10 @@ import { CreateroomComponent } from './createroom/createroom.component';
 import { SearchroomsComponent } from './searchrooms/searchrooms.component';
 import { VerifyaccountComponent } from './verifyaccount/verifyaccount.component';
 import { KeyobjectPipe } from './keyobject.pipe';
+import { ConnectionsComponent } from './connections/connections.component';
+import { ManageConnectionsComponent } from './manage-connections/manage-connections.component';
+import { AddedConnectionsComponent } from './added-connections/added-connections.component';
+import { PrivateChatComponent } from './private-chat/private-chat.component';
 
 
 const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['websocket','polling']}};
@@ -48,7 +52,11 @@ const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['webso
     CreateroomComponent,
     SearchroomsComponent,
     VerifyaccountComponent,
-    KeyobjectPipe
+    KeyobjectPipe,
+    ConnectionsComponent,
+    ManageConnectionsComponent,
+    AddedConnectionsComponent,
+    PrivateChatComponent
   ],
   imports: [
     BrowserModule,

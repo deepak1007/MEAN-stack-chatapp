@@ -64,6 +64,15 @@
     letter-spacing: 2px;
 }
 
+.add-friend-button{
+    font-size:16px;
+    color:blue;
+    cursor: pointer;
+    margin-left:5px;
+    display:inline-block;
+    list-style-type:none;
+}
+
 
 @media screen and (max-width: 700px){
     *{

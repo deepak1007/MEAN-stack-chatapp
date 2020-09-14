@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
         //get the response and fill it in cookie and then fill the details object in data.service to make it available all the time to profile page and other pages. 
         if(response.status == true){
           localStorage.setItem("email", response.data.email);
+          localStorage.setItem("userUniqueId", response.data.uniqueUserId);
            this.ds.filldetails({FullName: response.data.FullName, email:response.data.email, password:response.data.    password, about:response.data.about, gender:response.data.gender});
            this.route.navigate(['/chat-dashboard']);
            this.ds.spinnerControl('hide');
