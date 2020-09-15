@@ -1,39 +1,58 @@
-<div class=" container-lg">
+<div class="container-lg">
     <div class="row">
         <div class="col-12 p-5 category-container">
-            <div class="join-group p-2 bg-dark" (click)="goToMessageArea()">
-                 <div class='headers'>
-                     <h3>Join Group</h3>
-                     <div class="arrow">
-                         <i class='fa fa-arrow-right'></i>
-                     </div>
-                </div> 
+          <div class='part'>
+            <div class="join-group pt-2 bg-dark" (click)="goToMessageArea()">
+              
+                
+                <div class='img'>
+                    <img src="assets\icons\discussion.png" alt="">
+                    <div class='headers'>
+                        <h3>Join Group</h3>
+                        <div class="arrow">
+                            <i class='fa fa-arrow-right'></i>
+                        </div>
+                   </div> 
+                </div>
+
                 <div class="text">
-                    <p class=''>Join a random group chat </p>
+                    <p class=''>Join Group </p>
+                    <p class='p-mobile'>Join a random Group</p>
                 </div>
             </div>
-            <div class='part'>
-                <div class="join-group make-room mt-5 p-2 bg-dark" (click)="goToCreateRoom()">
+            
+                <div class="join-group make-room pt-2 bg-dark" (click)="goToCreateRoom()">
+                   
+                   <div class='img'>
+                    <img src="assets\icons\add-user.png" alt="">
                     <div class='headers'>
                         <h3>Create Room</h3>
                         <div class="arrow">
                             <i class='fa fa-arrow-right'></i>
                         </div>
-                   </div> 
-                   <div class="text">
-                       <p class='bg-secondary'>create a room for chat </p>
+                     </div> 
                    </div>
+                   <div class="text">
+                       <p class='bg-secondary'>Create Room </p>
+                       <p class='p-mobile'>Create your own room </p>
+                   </div>
+                   
                </div>
     
-               <div class="join-group enter-room mt-5 p-2 bg-dark" (click)="goToSearchRoom()">
-                 <div class='headers'>
-                    <h3>Search Room</h3>
-                    <div class="arrow">
-                        <i class='fa fa-arrow-right'></i>
-                    </div>
-                </div> 
+               <div class="join-group enter-room pt-2 bg-dark" (click)="goToSearchRoom()">
+                 
+                <div class='img'>
+                    <img src="assets\icons\search-engine.png" alt="">
+                    <div class='headers'>
+                        <h3>Search Room</h3>
+                        <div class="arrow">
+                            <i class='fa fa-arrow-right'></i>
+                        </div>
+                    </div> 
+                   </div>
                 <div class="text">
-                    <p class='bg-secondary'>Search For Room</p>
+                    <p class='bg-secondary'>Search Room</p>
+                    <p class='p-mobile'> Search rooms by id </p>
                 </div>
               </div>
             </div>
