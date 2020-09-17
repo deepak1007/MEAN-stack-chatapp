@@ -7,7 +7,7 @@
 }
 
 .sidenavcontainer{
-    padding:10px 0px;
+   padding:10px 0px;
    display:inline-block;
    position:fixed;
    z-index: 9999;
@@ -31,6 +31,11 @@
 .flex-item:visited{
     border:none;
 }
+img{
+    width:25px;
+    height:25px;
+}
+
 
 @media screen and (min-width:650px){
     
@@ -42,9 +47,9 @@
         bottom:unset;
     }
     .sidenavcontainer:hover{
-       width:20vh;
+       width:23vh;
        transition:0.5s;
-      
+       overflow: hidden;
     }
     
     .sidenav .navigaton-links-container  {
@@ -70,6 +75,11 @@
       
         display:block;
     }
-
+     
+    img{
+        margin-left:10px;
+        width:35px;
+        height:35px;
+    }
 
 }

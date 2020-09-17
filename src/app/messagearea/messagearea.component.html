@@ -169,7 +169,7 @@ collapsable end  -->
 
                  <div class="img" *ngIf="message.details.meme.is == 1">
                   <img  src="" [alt]="message.details.meme.memeData.title">
-                  <span style='cursor:pointer' (click)='downloadFile($event,"image", message.details.meme.memeData.url)'> &nbsp; <i class='fa fa-download'></i></span>
+                  <span style='cursor:pointer' (click)='downloadFile($event,"image", message.details.meme.memeData.url)'> &nbsp; <!--<i class='fa fa-download'></i>--> <img src="downloadicon.png" style='width:25px; height:25px;' alt="download icon"></span>
                 </div>
                 
                  {{message.details.message}}
@@ -185,7 +185,7 @@ collapsable end  -->
 
                 <div class="img" *ngIf="message.details.meme.is == 1">
                   <img  src="" [alt]="message.details.meme.memeData.title">
-                  <span style='cursor:pointer' (click)='downloadFile($event,"image", message.details.meme.memeData.url)'> &nbsp; <i class='fa fa-download'></i></span>
+                  <span style='cursor:pointer' (click)='downloadFile($event,"image", message.details.meme.memeData.url)'> &nbsp; <!--<i class='fa fa-download'></i>--> <img src="assets/icons/down-arrow.png" style='width:25px; height:25px;' alt="download icon"></span>
                 </div>
 
                 {{message.details.message}}
