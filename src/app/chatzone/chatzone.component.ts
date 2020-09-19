@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ChatServiceService } from '../chat-service.service';
 
 @Component({
   selector: 'app-chatzone',
@@ -7,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChatzoneComponent implements OnInit {
 
-  constructor() {
-
+  constructor(private cs: ChatServiceService) {
+        
    }
 
   ngOnInit(): void {
@@ -16,7 +17,8 @@ export class ChatzoneComponent implements OnInit {
     var navbtn = <HTMLElement><any> document.getElementsByClassName('nav-show-btn')[0];
     navbtn.style.display = "none";
     
-
+    this.cs.getOnline();
+  
   }
 
 }

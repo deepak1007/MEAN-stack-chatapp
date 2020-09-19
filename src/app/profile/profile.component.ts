@@ -26,18 +26,22 @@ export class ProfileComponent implements OnInit {
     //get the profile pic address saved in the server 
      this.Httpc.get('http://localhost:8000/profile-picture/' + localStorage.getItem('email')).subscribe((res:any)=>{
        if(res.success == true){
+         if(res.proPic_src != undefined)
          this.proPic_src = "http://localhost:8000/" + res.proPic_src;
+         else
+         this.proPic_src = "assets/icons/account.png";
+ 
           job_done_counter = job_done_counter  + 1;
           if(job_done_counter == 2){
             this.ds.spinnerControl('hide');
           }
-       }else{
-        this.proPic_src = "..\\..\\assets\\45653808_553438705081091_2716345778523078656_o.png";
-        job_done_counter = job_done_counter  + 1;
-        if(job_done_counter == 2){
-          this.ds.spinnerControl('hide');
-        }
        }
+     }, (err)=>{
+      this.proPic_src = "assets\icons\account.png";
+      job_done_counter = job_done_counter  + 1;
+      if(job_done_counter == 2){
+        this.ds.spinnerControl('hide');
+      }
      });
 
 

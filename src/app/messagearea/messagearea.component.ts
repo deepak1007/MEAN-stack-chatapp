@@ -151,7 +151,14 @@ export class MessageareaComponent implements OnInit {
     this.membersObserver.unsubscribe();
     this.rejectionObserver.unsubscribe();
     this.banObserver.unsubscribe();
-    this.chatService.closeSocket();
+    /*
+     * this.chatService.closeSocket();
+     * closes the entire connection that is makes the user offline. (experimental) we are using
+     * closeChat instead that just makes performs the chat exit.
+     * remove the close chat if not working properly.
+     * 
+     */
+    this.chatService.closeChat();
     var header;
     header = <HTMLElement><any> document.getElementsByClassName('header')[0];
     header.style.display =  "block";

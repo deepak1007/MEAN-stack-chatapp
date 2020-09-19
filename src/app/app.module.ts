@@ -28,6 +28,7 @@ import { ConnectionsComponent } from './connections/connections.component';
 import { ManageConnectionsComponent } from './manage-connections/manage-connections.component';
 import { AddedConnectionsComponent } from './added-connections/added-connections.component';
 import { PrivateChatComponent } from './private-chat/private-chat.component';
+import { FriendCircleComponent } from './friend-circle/friend-circle.component';
 
 
 const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['websocket','polling']}};
@@ -56,7 +57,8 @@ const config:SocketIoConfig = {url:"localhost:8000", options:{transports:['webso
     ConnectionsComponent,
     ManageConnectionsComponent,
     AddedConnectionsComponent,
-    PrivateChatComponent
+    PrivateChatComponent,
+    FriendCircleComponent
   ],
   imports: [
     BrowserModule,

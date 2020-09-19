@@ -15,6 +15,14 @@ export class ChatServiceService {
     this.clientIO.connect();
   }
 
+  public getOnline(){
+    this.clientIO.emit("online", {userUniqueId: localStorage.getItem('userUniqueId')});
+
+    this.clientIO.on('successfull', ()=>{
+       console.log("isOnline");
+    })
+  }
+
   public getMessages = () => {
     return Observable.create((observer) => {
             this.clientIO.on('new-message', (message) => {
@@ -74,6 +82,10 @@ export class ChatServiceService {
 
   closeSocket(){
     this.clientIO.disconnect();
+  }
+
+  closeChat(){
+    this.clientIO.emit('disconnectChat');
   }
   
   public privateConnect = (receiverId)=>{

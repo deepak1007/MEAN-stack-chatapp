@@ -33,7 +33,7 @@ input[type='file']{
     border-radius: 50%;
     overflow:hidden;
     position: relative;
-
+    border:7px double black;
 }
 
 .profile-pic img{
@@ -122,8 +122,8 @@ option {
 
     }
     .profile-pic{
-        width:180px;
-        height:180px;
+        width:150px;
+        height:150px;
         align-self: center;
     }
     textarea{

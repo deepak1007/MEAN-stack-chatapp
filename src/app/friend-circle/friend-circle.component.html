@@ -1,0 +1,44 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="circle-container">
+
+                <div class="center-details">
+                    <div class="self-pic" *ngIf='showDetails == false'>
+                        <img src="" alt="">
+                    </div>
+                    <div class="friend-details" *ngIf='showDetails == true'>
+                        <div class="name">
+                            <h2> {{ fName }} </h2>
+                        </div>
+                        <div class="about">
+                            <p>{{ fAbout }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="circle">
+                    <div *ngFor='let friend of connection_list; let i = index' class="div-friend" [ngClass]="{'top': i==0, 'right': i==2, 'bottom': i==1, 'left': i==3}" (mouseover)='showDetailsFunction(i)' (mouseleave)="showDetails = false">
+                        <div class="profile-pic"  *ngIf='i >= current_page-1 && (i <= current_page + max_at_one_page)' >
+                            <img [src]="'http://localhost:8000/' + friend.proPic" alt="">
+                        </div>
+                        <div class="options"  *ngIf='i >= current_page-1 && (i <= current_page + max_at_one_page)' >
+                            <div class="message" (click)='message(friend._id)'><img src="assets/icons/chat.png" alt="chat icon"></div>
+                            <div class="remove" (click)='removeConnection(i, friend._id)'>
+                                x
+                            </div>
+                            <div class="visit-profile" (click)='goToProfile(friend._id)'><img src="assets/icons/profile icon.png" alt="visit-profile icion"></div>
+                        </div>
+                    </div>  
+                </div>
+                <div class='pagination'>
+                    <ul>
+                        <li class='btn btn-primary px-2 nav-button' [class.disabled]='current_page == 1'>prev <span class='numbers'> {{ current_page - 1 }}</span></li>
+                        <li><input type="text" name="current-page" id="current-page"  [(ngModel)]='current_page' #ngModel> <span style='display:block; font-size:14px'>{{ total_pages }} page </span></li>
+                        <li class='btn btn-primary px-2 nav-button' [class.disabled]='current_page == total_pages'>next <span class='numbers'>{{ 1 + current_page  }}</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

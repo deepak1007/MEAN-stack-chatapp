@@ -17,6 +17,7 @@ import { VerifyaccountComponent } from './verifyaccount/verifyaccount.component'
 import { ConnectionsComponent } from './connections/connections.component';
 import { AddedConnectionsComponent } from './added-connections/added-connections.component';
 import { PrivateChatComponent } from './private-chat/private-chat.component';
+import { FriendCircleComponent } from './friend-circle/friend-circle.component';
 
 
 const routes: Routes = [
@@ -41,7 +42,8 @@ const routes: Routes = [
     {path:'create-room', component:CreateroomComponent},
     {path:'search-room', component:SearchroomsComponent},
     {path:"manage-requests", component:ConnectionsComponent},
-    {path:"manage-connections", component:AddedConnectionsComponent}
+    {path:"manage-connections", component:FriendCircleComponent},
+    {path:"friend-circle", component:FriendCircleComponent}
   ]}, 
  
 

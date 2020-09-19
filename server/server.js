@@ -8,7 +8,6 @@ const bcrypt = require('bcrypt');
 const sendMail = require('./mail').sendMail;
 const buildLink = require('./mail').buildLink;
 const upload = require('./multerConfig'); 
-const { connection } = require('mongoose');
 //const http = require('http');
 
 
@@ -40,8 +39,10 @@ client.connect((err, con)=>{
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(express.static(__dirname + '/upload')); 
-app.use(cors());
+app.use(express.static(__dirname + '/upload', {cacheControl: true, setHeaders: (res, path)=>{
+    res.setHeader('Cache-Control', 'public, max-age=360000');
+}})); 
+app.use(cors()); 
 
 
 /*app.use(cors({ //set cross origin site for socket
@@ -72,6 +73,23 @@ let private = {}
 io.on('connection',(client)=>{ 
     userCount++;  
     console.log("user connected " + userCount);   
+
+    client.on('online', async(data)=>{
+        try{
+            const { userUniqueId } = data;
+            const collection = connectedObj.db(Dbname).collection('users');
+            const updateFlag = await collection.updateOne({_id: ObjectId(userUniqueId)}, {$set: {isOnline: true}});
+            
+            client.userUniqueId = userUniqueId;
+            client.emit("successfull");
+            
+        }catch(e){
+            client.emit("unasuccessfull");
+        }  
+        
+    })
+
+
     client.on('join-room', async (data)=>{
         //client sends request to join perticular room (room_name)
         //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
@@ -135,19 +153,42 @@ io.on('connection',(client)=>{
         }
     });
     
-    client.on("disconnect", ()=>{ 
-        //console.log('user disconnected, client_id :' + client.id);  
-        try{
+    client.on("disconnectChat", ()=>{
+         //console.log('user disconnected, client_id :' + client.id);  
+         try{   
             console.log("disconnected" + client.currentRoom + " id " + client.id);
             //console.log(client);
-              delete rooms[client.currentRoom].memberDetails[client.id];
-              rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers - 1;
-              io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails});
-              //delete id_to_email[client.id]; 
-              userCount--; 
-        }catch{
-            console.log("disconnectoin error for " + client.id);
-        }
+           delete rooms[client.currentRoom].memberDetails[client.id];
+           rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers - 1;
+           io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails});
+           client.currentRoom = null;
+           //delete id_to_email[client.id]; 
+           userCount--; 
+     }catch{
+         console.log("disconnectoin error for " + client.id); 
+     }
+    });
+
+    client.on("disconnect", async()=>{ 
+        //console.log('user disconnected, client_id :' + client.id);  
+        try{   
+             
+           const userUniqueId = client.userUniqueId;
+           const collection = connectedObj.db(Dbname).collection('users');
+           const updateFlag = await collection.updateOne({_id: ObjectId(userUniqueId)}, {$set: {isOnline: false}});
+           client.emit("successfull"); 
+
+           console.log("disconnected" + client.currentRoom + " id " + client.id);
+           if(client.currentRoom != null){
+            delete rooms[client.currentRoom].memberDetails[client.id];
+            rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers - 1;
+            io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails});
+            userCount--; 
+           }
+          
+     }catch{
+         console.log("disconnection error for " + client.id);
+     }
     })
 
 
@@ -167,7 +208,8 @@ io.on('connection',(client)=>{
      client.join(receiverId);
      client.currentRoom = receiverId;
      client.uniqueId = senderId;
-     const collection = connectedObj.db(Dbname).collection('users');
+     client.sendingTo = receiverId;
+     const collection = connectedObj.db(Dbname).collection('users'); 
      const data = await collection.find({_id : ObjectId(receiverId)},{projection:{_id: 1, firstname:1, lastname:1}}).toArray();
      io.sockets.in(client.currentRoom).emit("connected", data[0]);
     }catch(e){
