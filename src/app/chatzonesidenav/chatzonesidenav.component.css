@@ -36,6 +36,22 @@ img{
     height:25px;
 }
 
+.messages{
+    position:relative;
+}
+.messages .message-indicator{
+    position:absolute;
+    top:6px;
+    right:6px;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    display:block;
+}
+
+.messages .new-message{
+    background:red;
+}
 
 @media screen and (min-width:650px){
     

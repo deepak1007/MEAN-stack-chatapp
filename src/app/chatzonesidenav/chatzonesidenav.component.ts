@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ChatServiceService } from '../chat-service.service';
+import { StateService } from '../state.service';
 
 
 @Component({
@@ -9,15 +11,25 @@ import { Router } from '@angular/router';
 })
 export class ChatzonesidenavComponent implements OnInit {
   active;
+  newMessage = false;
   colorselected = ["black", "black", "black"];
 
-  constructor(private route:Router) {
+  constructor(private route:Router, private cs: ChatServiceService, private ss:StateService) {
     this.active = 1
    }
 
   ngOnInit(): void {
-   
-    
+     
+     this.cs.messageNotif().subscribe(()=>{
+       this.newMessage = true;
+     });
+     
+     this.ss.returnMIO().subscribe((data: any)=>{
+       if(data.seen){
+         this.newMessage = false;
+       }
+     })
+     
 
   }
   changecolor(i){

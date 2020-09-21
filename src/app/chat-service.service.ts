@@ -95,11 +95,16 @@ export class ChatServiceService {
         this.clientIO.on('connected', (data)=>{
           observer.next(data);
         });
-      });
-    
+      });   
   }
 
-
+  public messageNotif = ()=>{
+    return Observable.create((observer)=>{
+      this.clientIO.on('message-notif', ()=>{
+        observer.next();
+      })
+    })
+  }
 
   
 

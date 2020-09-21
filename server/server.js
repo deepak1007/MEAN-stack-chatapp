@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 const sendMail = require('./mail').sendMail;
 const buildLink = require('./mail').buildLink;
 const upload = require('./multerConfig'); 
+const { connections } = require('mongoose');
 //const http = require('http');
 
 
@@ -78,9 +79,10 @@ io.on('connection',(client)=>{
         try{
             const { userUniqueId } = data;
             const collection = connectedObj.db(Dbname).collection('users');
-            const updateFlag = await collection.updateOne({_id: ObjectId(userUniqueId)}, {$set: {isOnline: true}});
+            const updateFlag = await collection.findOneAndUpdate({_id: ObjectId(userUniqueId)}, {$set: {isOnline: true}}, {returnOriginal: false});
             
             client.userUniqueId = userUniqueId;
+            client.join(updateFlag.value._id);
             client.emit("successfull");
             
         }catch(e){
@@ -122,22 +124,25 @@ io.on('connection',(client)=>{
 
  
     client.on("create-message",(data)=>{
-         //inserts the message's form_id in the incoming data.
-        // io.sockets.emit("new-message", JSON.stringify(data));
-
-        /* for private msg no client.id */
+        /* 
+         inserts the message's form_id in the incoming data.
+         io.sockets.emit("new-message", JSON.stringify(data));
+         for private msg no client.id 
+        */
         room = client.currentRoom;
          if(!data.hasOwnProperty('toPrivate')){
             data['from_id'] = client.id;
-            console.log(1);
          }
          else {
-            room = client.uniqueId;
-            io.sockets.sockets[client.id].emit("new-message", JSON.stringify(data));
+            room = client.currentRoom;
+            if(io.sockets.adapter.rooms[room] != 2){
+                client.messageBuffer[client.sendingTo].push(data);
+            } 
+            /* io.sockets.sockets[client.id].emit("new-message", JSON.stringify(data)); */
          }
          
-
-         io.sockets.in(room).emit("new-message", JSON.stringify(data));  
+        
+         io.sockets.in(room).emit("new-message", JSON.stringify(data));    
     });
      
     client.on('member_remove_req', (data)=>{ 
@@ -153,15 +158,24 @@ io.on('connection',(client)=>{
         }
     });
     
-    client.on("disconnectChat", ()=>{
+    client.on("disconnectChat", async()=>{
          //console.log('user disconnected, client_id :' + client.id);  
-         try{   
-            console.log("disconnected" + client.currentRoom + " id " + client.id);
+         try{  
+             console.log(client.messageBuffer[client.sendingTo].length)
+            if(client.messageBuffer[client.sendingTo].length > 0){
+                const collection = connectedObj.db(Dbname).collection('users');
+                const updateFlag = await collection.updateOne({_id : ObjectId(client.sendingTo), 'connections.friendId': ObjectId(client.userUniqueId)}, {$push: {'connections.$[].messageBuffer': {$each : client.messageBuffer[client.sendingTo] }}});
+                io.sockets.in(client.sendingTo).emit('message-notif');
+            }
+
+           console.log("disconnected" + client.currentRoom + " id " + client.id);
             //console.log(client);
            delete rooms[client.currentRoom].memberDetails[client.id];
            rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers - 1;
            io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails});
            client.currentRoom = null;
+
+           
            //delete id_to_email[client.id]; 
            userCount--; 
      }catch{
@@ -172,7 +186,13 @@ io.on('connection',(client)=>{
     client.on("disconnect", async()=>{ 
         //console.log('user disconnected, client_id :' + client.id);  
         try{   
-             
+           
+            if(client.hasOwnProperty('messageBuffer') && client.messageBuffer[client.sendingTo].length > 0){
+                const collection = connectedObj.db(Dbname).collection('users');
+                const updateFlag = await collection.updateOne({_id : ObjectId(client.sendingTo), 'connections.friendId': ObjectId(client.userUniqueId)}, {$push: {'connections.$[].messageBuffer': {$each : client.messageBuffer[client.sendingTo] }}});
+                io.sockets.in(client.sendingTo).emit('message-notif');
+            }
+
            const userUniqueId = client.userUniqueId;
            const collection = connectedObj.db(Dbname).collection('users');
            const updateFlag = await collection.updateOne({_id: ObjectId(userUniqueId)}, {$set: {isOnline: false}});
@@ -186,7 +206,8 @@ io.on('connection',(client)=>{
             userCount--; 
            }
           
-     }catch{
+     }catch(e){
+         console.error(e);
          console.log("disconnection error for " + client.id);
      }
     })
@@ -195,9 +216,9 @@ io.on('connection',(client)=>{
 //private messages
 
  client.on('join-private', async(metaData)=>{
-    try{
-     const { senderId, receiverId } = metaData;
-     console.log(metaData);
+    try{ 
+    const { senderId, receiverId } = metaData;
+     /*
      private[senderId] = {
          receiverId : receiverId,
          messageBuffer: {
@@ -205,15 +226,31 @@ io.on('connection',(client)=>{
              from:[],
          }
      }
-     client.join(receiverId);
-     client.currentRoom = receiverId;
+     */
+     const collection = connectedObj.db(Dbname).collection('users'); 
+     const data = await collection.find({_id : ObjectId(receiverId)},{projection:{_id: 1, firstname:1, lastname:1, connections:1}}).toArray();
+     let privateRoomId = '';
+     /*
+      * need optimisation : if we use object of connections instead of array we can map the friend id using the key in 
+      * O(1).
+      */
+     for(let x of data[0].connections){
+         if(x.friendId == senderId)
+           privateRoomId = x.privateRoomId;
+     }
+     /*
+      * optimisation ends.
+      */
+     delete data[0]['connections'];
+     client.join(privateRoomId);
+     client.currentRoom = privateRoomId;
      client.uniqueId = senderId;
      client.sendingTo = receiverId;
-     const collection = connectedObj.db(Dbname).collection('users'); 
-     const data = await collection.find({_id : ObjectId(receiverId)},{projection:{_id: 1, firstname:1, lastname:1}}).toArray();
-     io.sockets.in(client.currentRoom).emit("connected", data[0]);
+     client.messageBuffer = client.hasOwnProperty('messageBuffer')? client.messageBuffer : {};
+     client.messageBuffer[receiverId] = [];
+     io.sockets.sockets[client.id].emit("connected", data[0]);
     }catch(e){
-     io.sockets.in(metaData.receiverId).emit("error");
+        console.error('error');
     }
  });    
 });
@@ -421,8 +458,8 @@ app.post("/create-room", bodyParser.json(), (req, res)=>{
 app.post("/save-room-changes/:roomId", bodyParser.json(), (req, res)=>{
     try{
         const roomId = req.params.roomId;
-        console.log(roomId);
-        console.log(rooms);
+        /* console.log(roomId);
+        console.log(rooms); */
         if(rooms.hasOwnProperty(roomId)){ 
             const {roomName, roomDescription, roomCategory, roomPasswrod, roomPrivacy, roomPic} = req.body
             rooms[roomId].roomName= roomName;
@@ -545,11 +582,11 @@ app.post('/add-friend/:email',bodyParser.json(), async(req, res)=>{
         const userEmail = req.params.email;
         const friendId = req.body.connectToId;
         const userId = req.body.ownId;
+        const privateChatId = userEmail.split('@')[0] + friendId.split(' ', 5);
         var collection = connectedObj.db(Dbname).collection('users');
-        var data = await collection.updateOne({email:userEmail},{$push: {"connections": {friendId: ObjectId(friendId)}}});
-
-        var data = await collection.updateOne({_id: ObjectId(friendId)},{$push: {"connections": {friendId: ObjectId(userId)}}});
-
+        var data = await collection.updateOne({email:userEmail},{$push: {"connections": {friendId: ObjectId(friendId), privateChatId: privateChatId, messageBuffer: []}}});
+        var data = await collection.updateOne({_id: ObjectId(friendId)},{$push: {"connections": {friendId: ObjectId(userId), privateChatId: privateChatId, messageBuffer: []}}});
+ 
         if(data.nModified == 0) throw new Error("sorry could and the connection");   
             
         var data = await collection.updateOne({email:userEmail},{"$pull": {"requests": {"friendId": ObjectId(friendId)}}});
@@ -621,11 +658,12 @@ app.get('/get-connection-list/:email', bodyParser.json(), async(req, res)=>{
        const connectionIds = [];
        if(connectionList instanceof Array){
            connectionList.forEach(x => {
-               if(!x.friendId) return;               
+               if(!x.friendId) return;
+               
                connectionIds.push(ObjectId(x.friendId));
            });
 
-           const connectionListWithDetails = await collection.find({_id: {$in: connectionIds}},{ projection :{'firstname':1 , 'lastname':1, 'proPic':1 , 'about': 1, '_id':1}}).toArray();
+           const connectionListWithDetails = await collection.find({_id: {$in: connectionIds}},{ projection :{'firstname':1 , 'lastname':1, 'proPic':1 , 'about': 1, '_id':1,  'isOnline':1}}).toArray();
            
            if (connectionListWithDetails.length > 0)
            res.status(200).send({

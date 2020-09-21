@@ -33,7 +33,7 @@ export class PrivateChatComponent implements OnInit {
   random=0;
   membersObserver;
   rejectionObserver;
-
+  connectionObserver;
   FullName;
 
 
@@ -50,7 +50,7 @@ export class PrivateChatComponent implements OnInit {
     this.ds.spinnerControl('show');
     //in file data.service.ts for filling the details object so that we can use the all the informations here
   
-    this.chatService.openConnection();
+    //this.chatService.openConnection();
     
     
     this.ar.queryParamMap.subscribe((data:any)=>{
@@ -60,9 +60,8 @@ export class PrivateChatComponent implements OnInit {
           {
              this.ds.filldetails(resp.data);
          
-                  this.chatService.privateConnect(data.get('roomCode')).subscribe((data)=>{
+                 this.connectionObserver = this.chatService.privateConnect(data.get('roomCode')).subscribe((data)=>{
                     this.chat_name = data.firstname + " " + data.lastname;
-                    console.log(data);
                   },(x)=>{
                     console.log("error");
                   }, ()=>{
@@ -139,11 +138,13 @@ export class PrivateChatComponent implements OnInit {
   ngOnDestroy(): void {
     var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];
     spinner.style.display = "block";
+    this.connectionObserver.unsubscribe();
     this.messageObserver.unsubscribe();
     this.membersObserver.unsubscribe();
     this.rejectionObserver.unsubscribe();
     this.banObserver.unsubscribe();
-    this.chatService.closeSocket();
+    this.chatService.closeChat();
+    //this.chatService.closeSocket();
     var header;
     header = <HTMLElement><any> document.getElementsByClassName('header')[0];
     header.style.display =  "block";

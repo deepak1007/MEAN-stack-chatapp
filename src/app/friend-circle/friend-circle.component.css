@@ -77,6 +77,10 @@
    /* animation:rotate-backward 80s infinite; */
 }
 
+.div-friend-online{
+    border-color: green;
+}
+
 @keyframes rotate-backward{
     0%{
         transform:translate(-50%, -50%) rotate(0deg);

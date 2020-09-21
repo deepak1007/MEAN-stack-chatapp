@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { DataService } from '../data.service';
 import { Router } from '@angular/router';
 import { ChatServiceService } from '../chat-service.service';
+import { StateService } from '../state.service';
 
 @Component({
   selector: 'app-friend-circle',
@@ -35,11 +36,13 @@ export class FriendCircleComponent implements OnInit, OnDestroy {
   getConnectionsUnsubscribe;
 
 
-  constructor(private httpc:HttpClient, private router:Router , private ds:DataService, private cs: ChatServiceService) { }
+  constructor(private httpc:HttpClient, private router:Router , private ds:DataService, private cs: ChatServiceService, private ss: StateService) { }
 
   ngOnInit(): void {
     this.ds.spinnerControl('show');
-
+    
+    this.ss.messageSeen();
+     
     this.getConnectionsUnsubscribe =  this.httpc.get('http://localhost:8000/get-connection-list/' + localStorage.getItem('email')).subscribe((response:any)=>{
        if(response.status == 200){
               this.connection_list = response.data;

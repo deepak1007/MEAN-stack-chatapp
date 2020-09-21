@@ -18,8 +18,8 @@
                 </div>
 
                 <div class="circle">
-                    <div *ngFor='let friend of connection_list; let i = index' class="div-friend" [ngClass]="{'top': i==0, 'right': i==2, 'bottom': i==1, 'left': i==3}" (mouseover)='showDetailsFunction(i)' (mouseleave)="showDetails = false">
-                        <div class="profile-pic"  *ngIf='i >= current_page-1 && (i <= current_page + max_at_one_page)' >
+                    <div *ngFor='let friend of connection_list; let i = index' class="div-friend"  [ngClass]="{'top': i==0, 'right': i==2, 'bottom': i==1, 'left': i==3, 'div-friend-online': friend.isOnline == true}" (mouseover)='showDetailsFunction(i)' (mouseleave)="showDetails = false">
+                        <div class="profile-pic" *ngIf='i >= current_page-1 && (i <= current_page + max_at_one_page)' >
                             <img [src]="'http://localhost:8000/' + friend.proPic" alt="">
                         </div>
                         <div class="options"  *ngIf='i >= current_page-1 && (i <= current_page + max_at_one_page)' >
