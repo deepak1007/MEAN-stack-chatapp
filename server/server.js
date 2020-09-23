@@ -144,6 +144,12 @@ io.on('connection',(client)=>{
         
          io.sockets.in(room).emit("new-message", JSON.stringify(data));    
     });
+
+
+    client.on('seen', async()=>{
+        const collection = connectedObj.db(Dbname).collection('users');
+        const updateFlag = await collection.updateOne({_id : ObjectId(client.userUniqueId), 'connections.friendId': ObjectId(client.sendingTo)}, {$set: {'connections.$[].messageBuffer': []}});
+    })
      
     client.on('member_remove_req', (data)=>{ 
         admin_id = client.id; 
@@ -206,10 +212,10 @@ io.on('connection',(client)=>{
             userCount--; 
            }
           
-     }catch(e){
+      }catch(e){
          console.error(e);
          console.log("disconnection error for " + client.id);
-     }
+     } 
     })
 
 
@@ -228,29 +234,33 @@ io.on('connection',(client)=>{
      }
      */
      const collection = connectedObj.db(Dbname).collection('users'); 
-     const data = await collection.find({_id : ObjectId(receiverId)},{projection:{_id: 1, firstname:1, lastname:1, connections:1}}).toArray();
-     let privateRoomId = '';
+     const data = await collection.find({_id :{$in : [ ObjectId(receiverId), ObjectId(senderId)]} },{projection:{_id: 1, firstname:1, lastname:1, proPic: 1, connections: {$elemMatch: { friendId : {$in : [ObjectId(receiverId), ObjectId(senderId)]}}}}}).toArray();
+     
+     
      /*
       * need optimisation : if we use object of connections instead of array we can map the friend id using the key in 
       * O(1).
-      */
      for(let x of data[0].connections){
          if(x.friendId == senderId)
-           privateRoomId = x.privateRoomId;
+           privateRoomId = x.privateRoomId
      }
-     /*
       * optimisation ends.
       */
-     delete data[0]['connections'];
+     
+     let privateRoomId = data[0].connections[0].privateChatId;
+     const newMessages = data[0]._id == senderId? data[0].connections[0].messageBuffer : data[1].connections[0].messageBuffer;
+     let friendData = data[0]._id == receiverId ? data[0] : data[1];
+     delete friendData['connections']; 
+     console.log(data);
      client.join(privateRoomId);
      client.currentRoom = privateRoomId;
-     client.uniqueId = senderId;
-     client.sendingTo = receiverId;
+     client.uniqueId = senderId;     /* id of the sender for using in database */
+     client.sendingTo = receiverId; /* _id of the receiver */
      client.messageBuffer = client.hasOwnProperty('messageBuffer')? client.messageBuffer : {};
      client.messageBuffer[receiverId] = [];
-     io.sockets.sockets[client.id].emit("connected", data[0]);
+     io.sockets.sockets[client.id].emit("connected", { friendData: friendData, newMessagesViaFriend: newMessages});
     }catch(e){
-        console.error('error');
+        console.error(e);
     }
  });    
 });
@@ -654,29 +664,42 @@ app.get('/get-connection-list/:email', bodyParser.json(), async(req, res)=>{
        const userData = await collection.findOne({email: userEmail});
        const connectionList = userData.connections;
        if(!connectionList.length) throw new Error("no friends");
-    
-       const connectionIds = [];
+      
+       /*
+        * converting the returned connectionList into key value Pair using friendId and messageBuffer length
+        */
+       const connectionIds = {};
        if(connectionList instanceof Array){
            connectionList.forEach(x => {
                if(!x.friendId) return;
-               
-               connectionIds.push(ObjectId(x.friendId));
+               connectionIds[x.friendId] = x.messageBuffer.length;
+               /* connectionIds.push(ObjectId(x.friendId)); */
            });
 
-           const connectionListWithDetails = await collection.find({_id: {$in: connectionIds}},{ projection :{'firstname':1 , 'lastname':1, 'proPic':1 , 'about': 1, '_id':1,  'isOnline':1}}).toArray();
-           
-           if (connectionListWithDetails.length > 0)
-           res.status(200).send({
-               status:200, 
-               message:"connection requests", 
-               data:connectionListWithDetails
-            });
+        const connectionListWithDetails = await collection.find({_id: {$in: Object.keys(connectionIds).map(x=>{
+            return ObjectId(x);
+        })}},{ projection :{'firstname':1 , 'lastname':1, 'proPic':1 , 'about': 1, '_id':1,  'isOnline':1}}).toArray();
+
+        /* 
+         * adding the no. of messages by each friend to the retrienved array of records as it is not present already
+         * in the data base 
+         */
+        connectionListWithDetails.map(x=>{
+            x.noOfMessages = connectionIds[x._id];
+        });
+
+        if (connectionListWithDetails.length > 0)
+        res.status(200).send({
+           status:200, 
+           message:"connection requests", 
+           data:connectionListWithDetails
+        });
            else
-           res.status(200).send({ 
-               status:false,
-               message:"sorry no data received",
-               data:null
-           });
+        res.status(200).send({ 
+           status:false,
+           message:"sorry no data received",
+           data:null
+        });
        }
     }catch(e){
         res.status(200).send({

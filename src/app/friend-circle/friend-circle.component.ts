@@ -45,9 +45,14 @@ export class FriendCircleComponent implements OnInit, OnDestroy {
      
     this.getConnectionsUnsubscribe =  this.httpc.get('http://localhost:8000/get-connection-list/' + localStorage.getItem('email')).subscribe((response:any)=>{
        if(response.status == 200){
+              setTimeout(()=>{
               this.connection_list = response.data;
+              this.connection_list.sort((x, y)=>{
+                x.noOfMessages > y.noOfMessages;
+              });
               this.total_pages = Math.floor(this.connection_list.length / this.max_at_one_page + 1);
               this.ds.spinnerControl('hide');
+              }, 0);
        }else{
         this.connection_list = [];
         this.ds.spinnerControl('hide');

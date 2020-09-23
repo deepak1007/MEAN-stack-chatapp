@@ -61,7 +61,11 @@ export class PrivateChatComponent implements OnInit {
              this.ds.filldetails(resp.data);
          
                  this.connectionObserver = this.chatService.privateConnect(data.get('roomCode')).subscribe((data)=>{
-                    this.chat_name = data.firstname + " " + data.lastname;
+                    this.chat_name = data.friendData.firstname + " " + data.friendData.lastname;
+                    this.roomPic = 'http://localhost:8000/' + data.friendData.proPic;
+                    this.messageList.push(...data.newMessagesViaFriend);
+                    this.chatService.seen();
+                    console.log("dhddhhdhdhd");
                   },(x)=>{
                     console.log("error");
                   }, ()=>{
@@ -132,7 +136,7 @@ export class PrivateChatComponent implements OnInit {
     }*/
 
    
-    
+    console.log('helleo');
     }
    
   ngOnDestroy(): void {

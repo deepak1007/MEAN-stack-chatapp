@@ -106,7 +106,9 @@ export class ChatServiceService {
     })
   }
 
-  
+  public seen = ()=>{
+    this.clientIO.emit('seen');
+  }
 
 
 }
