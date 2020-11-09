@@ -2,7 +2,7 @@ var nodemailer = require('nodemailer');
 
 
 exports.buildLink= function(hash){
-    var emailBody = "<h3>Please click on the link below to verify your account</h3>";
+    var emailBody = "<h2><center> Hello FactChecker <center><h2><h3>Please click on the link below to verify your account</h3>";
     emailBody = emailBody + "<a href='http://localhost:4200/verify-account?hash=" + hash + "'>click here to verify</a>";
     return emailBody;
 }
@@ -16,7 +16,7 @@ exports.sendMail = function(from, to, subject,  htmlmsg){
             auth:
             {
              
-             
+              
     
             }
         }

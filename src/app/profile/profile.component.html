@@ -27,7 +27,7 @@
                <!--details-->
                <div class="details">
                    <form action="">
-                    <div class="form-group">
+                    <div class="form-group" >
                         <label for="email" class='form-label text-center'> {{ email }} <!--<input type="text" class='form-control' name='email' [value]="email" Disabled>--></label>
                        </div>
 
@@ -38,15 +38,15 @@
                        
 
                        <div class="form-group">
-                        <label for="pasword" class='form-label'>Password: <input type="password" placeholder="new password" class='form-control' name='password' [(ngModel)]="password"> </label>
+                        <label for="password" class='form-label'>Password: <input type="password" placeholder="hello" class='form-control' name='password' [(ngModel)]='password' #currentPassword='ngModel' (click)='password_change($event)' ngModel> </label>
                        </div>
                        
                         <div class="form-group">
                             <label for="about" class='form-label'>About Yourself:<textarea name="about" id="about" cols="30" rows="3" class='form-control' placeholder="Enter something about your self" [(ngModel)]="about"></textarea></label>
                         </div>
 
-                       <div class="form-group" >
-                        <label for="gender" class='form-label'>Gender:
+                       <div class="form-group" > 
+                        <label for="gender" class='form-label'>Gender: 
                         <select name="gender"  (change)="changeGender($event)" class='form-control'>
                             <option value="" [selected]="(gender=='')">Select Gender</option>
                             <option value="male" [selected]="(gender=='male')">Male</option>
@@ -63,7 +63,29 @@
                </div>
                <!--end details -->
             </div>
- 
+            <div class="password-change-modal" [class.show-modal]='showModal'>
+                <div class="form-container">
+                    <div class="close-modal" (click)='showModal = false'>
+                        X
+                    </div>
+                    <h2 class='text-center text-white mb-3'><small>Change password</small></h2>
+                    <form class='form' action="" #passwordChangeForm="ngForm">
+                        <div class="form-group">
+                            <label for="password" class='form-label'>
+                            <input type="password" class='form-control' required  #oldpassword="ngModel" placeholder="enter current Password"
+                             name="oldpassword" [(ngModel)]='oldPassword' ngModel></label>
+                            <span *ngIf="oldpassword.invalid && oldpassword.touched" class='error'></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class='form-label'>
+                            <input type="password" class='form-control' required  #newpassword="ngModel" placeholder="enter new Password" minlength="8" maxlength="15" 
+                             name="passwordd" [(ngModel)]='newPassword' ngModel (focus)='showValidation = true'></label>
+                            <span *ngIf="showValidation || newPassword.invalid" class='error'> *Please enter new password between 8 to 15 characters</span>
+                        </div>
+                       <button (click)='confirm_password_change()' [disabled]='passwordChangeForm.invalid || hideValidation()' class='btn btn-primary text-white mt-3 py-2 px-lg-5 px-2'>confirm change</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>

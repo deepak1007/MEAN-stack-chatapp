@@ -54,6 +54,10 @@ export class DataService {
   verifyAccount(data){
     return this.httpclient.post("http://localhost:8000/verify-account",data);
   }
+
+  change_password(data){
+    return this.httpclient.put("http://localhost:8000/change-password/" + localStorage.getItem('email'), data);
+  }
   
   spinnerControl(display):void{
     var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];

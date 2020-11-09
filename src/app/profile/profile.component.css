@@ -102,6 +102,75 @@ option {
 .btn-save:hover span{
     transition: 0s;
 }
+
+
+.password-change-modal{
+    position:fixed;
+    z-index:9999;
+    top:0%;
+    left:0%;
+    width:100%;
+    height:100%;
+    justify-content: center;
+    align-items: center;
+    background:rgba(0,0,0,0.5);
+    transition:0.5s;
+    display:none;
+}
+
+.show-modal{
+    display:flex;
+}
+
+.password-change-modal .form-container{
+    width:40%;
+    min-height:40%;
+    padding:10px 5px;
+    text-align:center;
+    background:rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    position:relative;
+    transition:0.5s;
+}
+
+.close-modal{
+    position:absolute;
+    top:10px;
+    right:10px;
+    font-weight:500;
+    font-size:22px;
+    padding:5px;
+    color:white;
+    cursor:pointer;
+}
+.password-change-modal .form-container .form{
+    width:100%;
+    padding: 0px 10px;
+}
+
+.form-container .form-group{
+    padding-bottom:5px;
+}
+.form-container .error{
+    color:white;
+}
+
+.form-container input{
+    text-align:center;
+    margin:0px;
+}
+
+.form-container label{
+    margin:2px;
+}
+.form-container button{
+    color:white;
+}
+
+
 @media screen and (max-width:766px){
     .container{
         
@@ -129,5 +198,8 @@ option {
     textarea{
         text-align:justify;
         font-family: 'Times New Roman', Times, serif;
+    }
+    .password-change-modal .form-container{
+        width:95%;
     }
 }

@@ -366,6 +366,26 @@ app.post('/save-details/:email', bodyParser.json(), (req, res)=>{
 })
 
 
+app.put("/change-password/:email", bodyParser.json(), async(req, res)=>{
+    try{
+      const {oldPassword, newPassword}  = req.body;  
+      const email = req.params.email;
+      const collection = connectedObj.db(Dbname).  collection('users');
+      const queryResult = await collection.  findOneAndUpdate({email: email, password:   oldPassword}, {$set : {password: newPassword}} ,  {returnOriginal: false});
+      if(queryResult.lastErrorObject.n = 0 ||   queryResult.lastErrorObject.updatedExisting !=   true)
+        throw new Error("current password is wrong");
+  
+      const result = {
+          status: true,
+          message: "password is updated"
+      }
+      res.send(result);
+    }catch(e){
+      console.error(e);
+      res.send({status: false, message:"current password entered is wrong"});
+    }
+})
+
 app.post("/upload-profile-picture/:email", upload.single('profilePic',), (req, res)=>{
     if (!req.file) {
         console.log("Your request doesn’t have any file");
@@ -661,7 +681,8 @@ app.get('/get-connection-list/:email', bodyParser.json(), async(req, res)=>{
     try{
        const userEmail = req.params.email;
        let collection = connectedObj.db(Dbname).collection('users');
-       const userData = await collection.findOne({email: userEmail});
+       const userData = await collection.findOne({email: userEmail}, {proPic: 1, connections:1});
+       const proPic = userData.proPic;
        const connectionList = userData.connections;
        if(!connectionList.length) throw new Error("no friends");
       
@@ -692,7 +713,7 @@ app.get('/get-connection-list/:email', bodyParser.json(), async(req, res)=>{
         res.status(200).send({
            status:200, 
            message:"connection requests", 
-           data:connectionListWithDetails
+           data:{connectionListWithDetails: connectionListWithDetails, selfPic: proPic}
         });
            else
         res.status(200).send({ 

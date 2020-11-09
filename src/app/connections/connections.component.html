@@ -1,10 +1,10 @@
-<div class="container-fluid">
+<!--<div class="container-fluid">
     <div class="row">
-        <div class="col-12 content">
-            <div class="heading">
+        <div class="col-12 content">-->
+            <!--<div class="heading">
                 <h2 class='text-center text-danger mt-5 mb-3'>Requests</h2>
                 <hr>
-             </div>
+             </div> -->
         <!--
             <form action=""  #searchForm='ngForm' class="form">
                 
@@ -35,23 +35,23 @@
                     
                 </div>
             </div>-->
-
+            <!--<h2 class='text-center mb-4 mt-5'><small>Manage Connection Requests</small></h2>
              <div class='table-container'>
-                <table class="table  table-striped table-dark">
+                <table class="table  table-striped table-dark ">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">name</th>
-                    <th scope="col">about</th>
+                    <th scope="col" class='hide-mobile'>about</th>
                     <th scope="col">controls</th>
                   </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let requester of request_list; let i = index" (click)="goToProfile(requester._id)">
-                     <!-- <th scope="row"><span class="status online"></span></th>-->
+                    /*<tr *ngFor="let requester of request_list; let i = index" (click)="goToProfile(requester._id)">
+                      <th scope="row"><span class="status online"></span></th> */
                       <td><img [src]="'http://localhost:8000/' + requester.proPic" style='width:30px;height:30px; border-radius: 50%;' alt=""></td>
                       <td>{{ requester.firstname + requester.lastname }}</td>
-                      <td>{{ requester.about }}</td>
+                      <td class='hide-mobile'>{{ requester.about }}</td>
                       <td>
                         <button (click)='acceptRequest(i, requester._id)' class='btn btn-success mr-1'>
                             accept <i>V</i>
@@ -64,6 +64,49 @@
                     </tr>
                   </tbody>
               </table>
+            </div>
+        </div>
+    </div>
+</div> 
+ <ul class="nav">
+                    <li class='nav-item profile-pic'><img [src]="'http://localhost:8000/' + requester.proPic" alt=""></li>
+                    <li class='nav-item'>{{ requester.firstname + requester.lastname }}</li>
+                    <li class='nav-item'>{{ requester.about }}</li>
+                    <li class='nav-item'>
+                        <button (click)='acceptRequest(i, requester._id)' class='btn btn-success mr-1'>
+                          accept <i>V</i>
+                        </button>
+                        <button class='btn btn-warning'>
+                          reject <i>X</i>
+                       </button>
+                    </li>
+                </ul>
+-->
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h2 class='text-center mb-1 mt-5 mt-md-4'><small>Manage Connection Requests</small></h2>
+            <div class="requesters-container">
+               <div class="indi-requester" *ngFor="let requester of request_list; let i = index">
+                   <div class="head" (click)="goToProfile(requester._id)">
+                       <img [src]="'http://localhost:8000/' + requester.proPic" [alt]="requester.firstname">
+                   </div>
+                   <div class="body">
+                       <h3 class='name'><small>{{ requester.firstname + requester.lastname }}</small></h3>
+                   </div>
+                   <div class='controls'>
+                    <button class='btn btn-success mr-1' (click)='acceptRequest(i, requester._id)'>
+                    accept <i>V</i>
+                  </button>
+                  <button class='btn btn-warning'>
+                    reject <i>X</i>
+                 </button></div>
+               </div>
+            </div>
+            <div class="empty-image">
+                <img *ngIf='isEmpty' src="" alt="no requests pending image">
             </div>
         </div>
     </div>

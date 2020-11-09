@@ -9,7 +9,7 @@ import { DataService } from '../data.service';
   styleUrls: ['./connections.component.css']
 })
 export class ConnectionsComponent implements OnInit, OnDestroy {
-
+  isEmpty; /* checks if there is no requests pending to show empty image */
   request_list;
   getRequestUnsubscribe
   constructor(private httpc:HttpClient, private router:Router , private ds:DataService) { }
@@ -19,6 +19,7 @@ export class ConnectionsComponent implements OnInit, OnDestroy {
     this.getRequestUnsubscribe =this.httpc.get('http://localhost:8000/get-requests-list/' + localStorage.getItem('email')).subscribe((response:any)=>{
        if(response.status == 200){
               this.request_list = response.data;
+              this.isEmpty = this.request_list.length > 0? false : true;
               this.ds.spinnerControl('hide');
        }else{
         this.request_list = [];

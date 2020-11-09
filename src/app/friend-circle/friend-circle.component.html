@@ -2,10 +2,9 @@
     <div class="row">
         <div class="col-12">
             <div class="circle-container">
-
                 <div class="center-details">
-                    <div class="self-pic" *ngIf='showDetails == false'>
-                        <img src="" alt="">
+                    <div class="self-pic" [class.hide]='showDetails == true'>
+                        <img [src]="selfProPic" alt="">
                     </div>
                     <div class="friend-details" *ngIf='showDetails == true'>
                         <div class="name">

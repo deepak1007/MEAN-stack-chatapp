@@ -15,6 +15,11 @@ export class ProfileComponent implements OnInit {
   gender_value;
   SelectedProPic;
   proPic_src;
+  
+  showModal= false;
+  newPassword;
+  oldPassword;
+  showValidation=false;
 
 
   constructor( private ds : DataService, private Httpc: HttpClient) { }
@@ -63,7 +68,7 @@ export class ProfileComponent implements OnInit {
             this.ds.filldetails(resp.data);
             this.FullName = resp.data.FullName;
             this.email = resp.data.email;
-            this.password = resp.data.password;
+            this.password = "********";
             this.about = resp.data.about;
             this.gender = resp.data.gender;
             job_done_counter = job_done_counter  + 1;
@@ -104,7 +109,33 @@ export class ProfileComponent implements OnInit {
     
   }
 
+  password_change(e){
+    e.preventDefault();
+    this.showModal = true;
+  }
+  
+  confirm_password_change(){
+    const data = {"oldPassword": this.oldPassword, "newPassword": this.newPassword};
+    this.ds.change_password(data).subscribe((response: any)=>{
+      if(response.status == true){
+        alert("current password is changed");
+        this.newPassword = "";
+        this.oldPassword = "";
+        this.showModal = false;
+      }else{
+        alert(response.message);
+      }
+    }, (e)=>{
+      console.log("error");
+    }, ()=>{
+      console.log("password change successfull");
+    })
+  }
 
+  hideValidation(){
+    this.showValidation = false;
+    return false;
+  }
   savedetails(){
     this.ds.spinnerControl('show');
     var firstName = this.FullName.split(' ')[0];

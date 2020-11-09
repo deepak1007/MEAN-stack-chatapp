@@ -14,6 +14,7 @@ import { StateService } from '../state.service';
 export class FriendCircleComponent implements OnInit, OnDestroy {
   
   showDetails =  false;
+  selfProPic;
   fName;
   fAbout;
   connection_list;
@@ -45,8 +46,9 @@ export class FriendCircleComponent implements OnInit, OnDestroy {
      
     this.getConnectionsUnsubscribe =  this.httpc.get('http://localhost:8000/get-connection-list/' + localStorage.getItem('email')).subscribe((response:any)=>{
        if(response.status == 200){
+             this.selfProPic = 'http://localhost:8000/' + response.data.selfPic;
               setTimeout(()=>{
-              this.connection_list = response.data;
+              this.connection_list = response.data.connectionListWithDetails;
               this.connection_list.sort((x, y)=>{
                 x.noOfMessages > y.noOfMessages;
               });

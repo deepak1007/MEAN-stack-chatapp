@@ -39,3 +39,14 @@ GET http://localhost:8000/get-requests-list/just@gmail.com
 
 ###
 GET http://localhost:8000/view-profile/null/just@gmail.com
+
+
+
+###
+put http://localhost:8000/change-password/just@gmail.com
+content-type: application/json
+
+{
+  "oldPassword" :  "hello123",
+  "newPassword" : "hello123"
+}
