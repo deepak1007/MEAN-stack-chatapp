@@ -1,7 +1,25 @@
 <body class=''>
+
+<section class="room-password-modal" [class.show-modal]='showModal'>
+    <div class="form-container">
+        <div class="close-modal" (click)='showModal = false'>
+            X
+        </div>
+        <h4 class='text-center mb-3'><small>this room is private please enter password</small></h4>
+        <form class='form' action="" #roomPasswordForm="ngForm">
+            <div class="form-group">
+                <label for="password" class='form-label'>
+                <input type="password" autocomplete="current-password" class='form-control' required  #roomPassword="ngModel" placeholder="enter password here" minlength="8" maxlength="15" 
+                 name="roomPassword" [(ngModel)]='roomPasswordCheck' ngModel></label>
+            </div>
+           <button (click)='join_room_with_password()' class='btn btn-primary text-white mt-3 py-2 px-lg-5 px-2'>Enter</button>
+        </form>
+    </div>
+</section>
+
 <div class="outerlayer bg-dark">
-    <h2 class='logo'>Chating App</h2>
-<div class="chatbox-holder">
+   <h2 class='logo'>Chating App</h2>
+   <div class="chatbox-holder">
     <div class="chatbox">
       <div class="chatbox-top">
         <div class="chatbox-avatar" [style]='{display:group?"":""}'>

@@ -13,6 +13,10 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ['./messagearea.component.css']
 })
 export class MessageareaComponent implements OnInit {
+  showModal = false;
+  roomPasswordCheck=null;
+  urlParams;
+
   createMessage:string;
   messageList = [];
   members = {};
@@ -45,55 +49,28 @@ export class MessageareaComponent implements OnInit {
   ngOnInit(): void {
 
     this.ds.spinnerControl('show');
-    //in file data.service.ts for filling the details object so that we can use the all the informations here
+    /* in file data.service.ts for filling the details object so that we can use the all the informations here */
   
     this.chatService.openConnection();
     
-    
-    this.ar.queryParamMap.subscribe((data:any)=>{
-      if(localStorage.getItem('email')){
-        this.Httpc.get('http://localhost:8000/get-details/'+localStorage.getItem('email')).subscribe((resp:any)=>{
-          if(resp.status == "200")
-          {
-             this.ds.filldetails(resp.data);
-             this.Httpc.get('http://localhost:8000/room-by-code/'+ data.get('roomCode')).subscribe((res:any)=>{
-              if(res.status == true){
-                  this.roomDescription = res.data['description'];
-                  this.roomCategory = res.data['category'];
-                  this.roomPassword = res.data['password'];
-                  this.chat_name = res.data['roomName'];
-                  this.mod = res.data['createdBy'];
-                  this.roomPrivacy = res.data['type'];
-                  this.roomCode = res.data['roomCode'];
-                  this.roomPic = res.data['roomPic'];
-                  this.roomMembers = res.data['roomMembers'];
-                  this.random = data.get('random');
-                  this.chatService.join_room(this.roomCode, this.ds.details.FullName); 
-                  this.ds.spinnerControl('hide');
-              }
-             },(err)=>{
-              console.log(err);
-              this.ds.spinnerControl('hide');
-             },()=>{
-              console.log("completed");
-             });
-
-            //Joins the room and provides user's name function in chat-services.
-            this.ds.spinnerControl('hide');
-
-          }
-        });
-      }
-  
+    /* takes url params matches the room type, if room type is private it opens password modal else it just calls  room join procedure function. */
+    this.ar.queryParams.subscribe((data:any)=>{
+      this.urlParams = data;
+      if(data.roomType== 'private' || data.type == 'private'){
+        this.showModal = true;
+        this.ds.spinnerControl('hide');
+      }else{
+        this.join_room_procedure();
+      }   
     },(err)=>{
       alert("some error has occured please go back and try again");
       this.ds.spinnerControl('hide');
-    })
+    });
+    
      
     this.messageObserver =  this.chatService.getMessages()
-              .subscribe((newIncomingMessage)=>{
+              .subscribe((newIncomingMessage: any)=>{
                        this.messageList.push(JSON.parse(newIncomingMessage));
-   
                });
 
     this.membersObserver = this.chatService.getMembers().subscribe((response:any)=>{
@@ -116,7 +93,7 @@ export class MessageareaComponent implements OnInit {
      
 
     function headershowhide(){
-      //if computer view then show side nav and header but for mobile view hide both...
+      /* if computer view then show side nav and header but for mobile view hide both... */
       if(1){
         var header;
          header = <HTMLElement><any> document.getElementsByClassName('header')[0];
@@ -136,13 +113,65 @@ export class MessageareaComponent implements OnInit {
     }
 
     headershowhide();
- /*   window.onresize = function(){
+    /* 
+    window.onresize = function(){
        headershowhide();
-    }*/
-
-   
-    
     }
+    */
+    }
+  
+
+  join_room_with_password(){
+    /*
+     * this is called when the room is password protected and user submits the password.
+     */
+    this.showModal = false;
+    this.ds.spinnerControl('show');
+    this.join_room_procedure();
+  }
+
+  join_room_procedure(){
+     /*
+      * It takes the url params and then fills the details of the room in service and then joins the room
+      * if the room is password protected it has to be called through enter_room_with_password() function
+      * if not then we can directly call it through ngOnInit();
+      * 
+      */   
+     if(localStorage.getItem('email')){
+      this.Httpc.get('http://localhost:8000/get-details/'+localStorage.getItem('email')).subscribe((resp:any)=>{
+        if(resp.status == "200")
+        {  
+           this.ds.filldetails(resp.data);
+           console.log(this.urlParams.roomCode);
+           this.Httpc.get('http://localhost:8000/room-by-code/'+ this.urlParams.roomCode).subscribe((res:any)=>{
+            if(res.status == true){
+                this.roomDescription = res.data['description'];
+                this.roomCategory = res.data['category'];
+                this.roomPassword = res.data['password'];
+                this.chat_name = res.data['roomName'];
+                this.mod = res.data['createdBy'];
+                this.roomPrivacy = res.data['type'];
+                this.roomCode = res.data['roomCode'];
+                this.roomPic = res.data['roomPic'];
+                this.roomMembers = res.data['roomMembers'];
+                this.random = this.urlParams.random;
+                this.chatService.join_room(this.roomCode, this.ds.details.FullName, this.roomPasswordCheck); 
+            }else{
+              console.log(res.message);
+            }
+           },(err)=>{
+            console.log(err);
+            this.ds.spinnerControl('hide');
+           },()=>{
+            console.log("completed");
+            this.ds.spinnerControl('hide');
+           });
+          //Joins the room and provides user's name function in chat-services.
+          this.ds.spinnerControl('hide');
+        }
+      });
+    }  
+  }
    
   ngOnDestroy(): void {
     var spinner = <HTMLElement><any> document.getElementsByClassName('show-spinner')[0];

@@ -88,6 +88,10 @@
     <div class="row">
         <div class="col">
             <h2 class='text-center mb-1 mt-5 mt-md-4'><small>Manage Connection Requests</small></h2>
+            <div class="empty-list" *ngIf='request_list.length == 0'>
+                <img src="assets/Social life-bro.png" alt="">
+                <h3 class='text-center'><small>no requests right now</small></h3>
+            </div>
             <div class="requesters-container">
                <div class="indi-requester" *ngFor="let requester of request_list; let i = index">
                    <div class="head" (click)="goToProfile(requester._id)">
@@ -98,10 +102,10 @@
                    </div>
                    <div class='controls'>
                     <button class='btn btn-success mr-1' (click)='acceptRequest(i, requester._id)'>
-                    accept <i>V</i>
+                    accept <i class='fa fa-right'></i>
                   </button>
                   <button class='btn btn-warning'>
-                    reject <i>X</i>
+                    reject <i class='fa fa-close'></i>
                  </button></div>
                </div>
             </div>

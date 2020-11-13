@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 export class SearchroomsComponent implements OnInit {
   room_list;
   roomCode;
+  passwordModal;
   no = 0;
   constructor(private httpc:HttpClient, private router:Router , private ds:DataService) { }
 
@@ -19,7 +20,6 @@ export class SearchroomsComponent implements OnInit {
     this.httpc.post('http://localhost:8000/get-available-rooms',{all:1, withCode:0}).subscribe((response:any)=>{
        if(response.status == true){
               this.room_list = response.data;
-              console.log(this.room_list);
               this.ds.spinnerControl('hide');
        }else{
         this.room_list = [];
@@ -52,10 +52,11 @@ export class SearchroomsComponent implements OnInit {
  });
   }
 
-  goToRoom(code){
+  goToRoom(code, roomType){
       this.ds.spinnerControl('show');
       const data = {};
       data['roomCode'] = code;
+      data['roomType'] = roomType;
       if(code == 'XyzaBc1Kzsxsw3'){
         data['random'] = 1;
       }else{

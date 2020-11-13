@@ -24,7 +24,7 @@ export class ChatServiceService {
   }
 
   public getMessages = () => {
-    return Observable.create((observer) => {
+    return new Observable((observer) => {
             this.clientIO.on('new-message', (message) => {
                 observer.next(message);
             });
@@ -32,7 +32,7 @@ export class ChatServiceService {
   }
 
   public getMembers =()=>{
-    return Observable.create((observer) => {
+    return new Observable((observer) => {
       this.clientIO.on('new-member', (members) => {
           observer.next(members);
       });
@@ -41,15 +41,16 @@ export class ChatServiceService {
   
 
   public removed = ()=>{
-    return Observable.create((observer)=>{
+    return new Observable((observer)=>{
       this.clientIO.on('banned', (data)=>{
         observer.next(data);
       })
     })
   };
   
-  public join_room(room_name, memberName): any{ //called in messagearea
-    this.clientIO.emit('join-room', {room_name:room_name, memberName:memberName, email:localStorage.getItem('email')});
+
+  public join_room(room_name, memberName, roomPassword): any{ //called in messagearea
+    this.clientIO.emit('join-room', {room_name:room_name, memberName:memberName, roomPassword: roomPassword, email:localStorage.getItem('email')});
     this.clientIO.on('uniqueIdReceive', (unique_id)=>{//takes the unique id of the socket fills it in local storage.
       localStorage.setItem('uniqueChatId', unique_id.unique_id);//unique id for identification of message belongingness.
      // localStorage.setItem('uniqueDataBaseId', unique_id.uniqueUserId);//for profile links
@@ -90,7 +91,7 @@ export class ChatServiceService {
   
   public privateConnect = (receiverId)=>{
 
-      return Observable.create((observer)=>{
+      return new Observable((observer)=>{
         this.clientIO.emit('join-private',{senderId:localStorage.getItem('userUniqueId'), receiverId:receiverId});
         this.clientIO.on('connected', (data)=>{
           observer.next(data);
@@ -99,9 +100,9 @@ export class ChatServiceService {
   }
 
   public messageNotif = ()=>{
-    return Observable.create((observer)=>{
-      this.clientIO.on('message-notif', ()=>{
-        observer.next();
+    return new Observable((observer)=>{
+      this.clientIO.on('message-notif', (data)=>{
+        observer.next(data);
       })
     })
   }

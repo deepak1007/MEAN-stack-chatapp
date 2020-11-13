@@ -36,7 +36,7 @@ export class PrivateChatComponent implements OnInit {
   connectionObserver;
   FullName;
 
-
+  isReceiverOnline
 
   constructor(
     private router:Router,
@@ -60,9 +60,10 @@ export class PrivateChatComponent implements OnInit {
           {
              this.ds.filldetails(resp.data);
          
-                 this.connectionObserver = this.chatService.privateConnect(data.get('roomCode')).subscribe((data)=>{
+                 this.connectionObserver = this.chatService.privateConnect(data.get('roomCode')).subscribe((data: any)=>{
                     this.chat_name = data.friendData.firstname + " " + data.friendData.lastname;
                     this.roomPic = 'http://localhost:8000/' + data.friendData.proPic;
+                    this.isReceiverOnline = data.isReceiverOnline;
                     this.messageList.push(...data.newMessagesViaFriend);
                     this.chatService.seen();
                     console.log("dhddhhdhdhd");
@@ -86,7 +87,7 @@ export class PrivateChatComponent implements OnInit {
     })
      
     this.messageObserver =  this.chatService.getMessages()
-              .subscribe((newIncomingMessage)=>{
+              .subscribe((newIncomingMessage: any)=>{
                        this.messageList.push(JSON.parse(newIncomingMessage));
    
                });

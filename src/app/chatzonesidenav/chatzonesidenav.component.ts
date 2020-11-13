@@ -20,8 +20,9 @@ export class ChatzonesidenavComponent implements OnInit {
 
   ngOnInit(): void {
      
-     this.cs.messageNotif().subscribe(()=>{
+     this.cs.messageNotif().subscribe((data)=>{
        this.newMessage = true;
+       this.ss.showNotif(data);
      });
      
      this.ss.returnMIO().subscribe((data: any)=>{

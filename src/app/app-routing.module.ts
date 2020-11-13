@@ -45,7 +45,7 @@ const routes: Routes = [
     {path:"manage-connections", component:FriendCircleComponent},
     {path:"friend-circle", component:FriendCircleComponent}
   ]}, 
- 
+  {path: "*", component: NormalpagesComponent}
 
 ];
 

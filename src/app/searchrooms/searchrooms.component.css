@@ -86,6 +86,7 @@ form{
     overflow-x:auto;
     padding:0px;
 }
+
 .table tbody:hover {
     cursor: pointer;
 }
@@ -140,10 +141,17 @@ form{
     .table-container{
         width:100%;
         overflow-x:auto;
-        box-sizing: content-box;
     }
 
-
+    table {
+        width: unset;
+        min-width: 100%;
+        white-space: nowrap;
+    }
+    #descWidth {
+        max-width: 900px;
+        overflow: auto;
+    }
     
    
 

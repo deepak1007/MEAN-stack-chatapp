@@ -63,11 +63,24 @@ app.use(cors());
 
 
 //socket---------------------------------------------->
-var univarsal = {roomName: "General", createdBy: "admin", description:"Random Group for Everyone", category:"general", type:"public", password:"",roomPic:'../../assets/icons/Infinity-1.9s-221px.png', roomCode:"XyzaBc1Kzsxsw3", roomLink:'http://localhost:4200/chat-dashboard/message-area',admin:"", roomMembers:0, memberDetails:{}};
+var univarsal = {
+  roomName: "General",
+  createdBy: "admin",
+  description:"Random Group for Everyone", 
+  category:"general", 
+  type:"public", 
+  password:"",
+  roomPic:'../../assets/icons/Infinity-1.9s-221px.png', 
+  roomCode:"XyzaBc1Kzsxsw3", 
+  roomLink:'http://localhost:4200/chat-dashboard/message-area',
+  admin:"", 
+  roomMembers:0, 
+  memberDetails:{}
+};
+
 let rooms  = {"XyzaBc1Kzsxsw3" : univarsal}; //room lists room_name : members
 let userCount = 0;
 let id_to_email = {}; 
-
 
 let private = {}
 
@@ -81,76 +94,91 @@ io.on('connection',(client)=>{
             const collection = connectedObj.db(Dbname).collection('users');
             const updateFlag = await collection.findOneAndUpdate({_id: ObjectId(userUniqueId)}, {$set: {isOnline: true}}, {returnOriginal: false});
             
-            client.userUniqueId = userUniqueId;
+            client.userUniqueId = userUniqueId
+            client.fullname = updateFlag.value.firstname + " " + updateFlag.value.lastname ;
             client.join(updateFlag.value._id);
             client.emit("successfull");
             
         }catch(e){
-            client.emit("unasuccessfull");
+            client.emit("unsuccessfull");
         }  
         
-    })
+    });
 
 
     client.on('join-room', async (data)=>{
         //client sends request to join perticular room (room_name)
         //rooms[room_name] = rooms[room_name]? rooms[room_name]++ : 0; //shows all the rooms and members in each room
+      if(rooms[data.room_name].type == "public" || rooms[data.room_name].password == data.roomPassword)
+      { 
         if(!rooms[data.room_name] || !rooms[data.room_name].hasOwnProperty('banList') || !rooms[data.room_name].banList.hasOwnProperty(data.email)){
         client.join(data.room_name);
         client.currentRoom = data.room_name; //new property to client socket that tells current room
         id_to_email[client.id] = data.email; //didn't find use till now.
         let auda_or_rutba = (data.email == rooms[client.currentRoom].admin)?"admin" : "member";
         console.log(client.id + " joined " + client.currentRoom); 
-       // console.log(rooms[client.currentRoom]);
         rooms[client.currentRoom].roomMembers = rooms[client.currentRoom].roomMembers + 1;
         rooms[client.currentRoom].memberDetails[client.id] = {memberName: data.memberName, memberPropic:"", member_role: auda_or_rutba};
-
-       // const collection = connectedObj.db(Dbname).collection('users');
-       // const userData  = await collection.find({email:email}).toArray();
-       // userUniqueId = userData[0]._id;
         if(auda_or_rutba != 'admin')
        {
          client.emit('uniqueIdReceive', {unique_id : client.id}); //sending unique client id.
 
        }else{
-           client.emit('uniqueIdReceive', {unique_id : client.id , setAdmin: 1, group:rooms[client.currentRoom].roomName});
+         client.emit('uniqueIdReceive', {unique_id : client.id , setAdmin: 1, group:rooms[client.currentRoom].roomName});
        }
         io.sockets.in(client.currentRoom).emit('new-member',{memberCount: rooms[client.currentRoom].roomMembers, allMemberDetails:rooms[client.currentRoom].memberDetails}); 
       }else{
         client.emit('rejected', {message:"Sorry can't join the room, seems like you are banned by the admin"});
       }
-        
-    });
+    }else{
+        client.emit('rejected', {message: "sorry wrong room password"});
+    }    
+ });
 
  
-    client.on("create-message",(data)=>{
+    client.on("create-message", async(data)=>{
         /* 
          inserts the message's form_id in the incoming data.
          io.sockets.emit("new-message", JSON.stringify(data));
          for private msg no client.id 
         */
+       try{
         room = client.currentRoom;
-         if(!data.hasOwnProperty('toPrivate')){
-            data['from_id'] = client.id;
-         }
-         else {
-            room = client.currentRoom;
-            if(io.sockets.adapter.rooms[room] != 2){
-                client.messageBuffer[client.sendingTo].push(data);
-            } 
-            /* io.sockets.sockets[client.id].emit("new-message", JSON.stringify(data)); */
-         }
-         
+        if(!data.hasOwnProperty('toPrivate')){
+           data['from_id'] = client.id;
+        }
+        else {
+           room = client.currentRoom;
+           if(io.sockets.adapter.rooms[room] != 2){
+               /* temporarily removing messageBuffer logic */
+               //client.messageBuffer[client.sendingTo].push(data);
+               const collection = connectedObj.db(Dbname).collection('users');
+               const updateFlag = await collection.updateOne({_id : ObjectId(client.sendingTo), 'connections.friendId': ObjectId(client.userUniqueId)}, {$push: {'connections.$[].messageBuffer': data}});
+               io.sockets.in(client.sendingTo).emit('message-notif', { name: client.fullname});
+           } 
+           /* io.sockets.sockets[client.id].emit("new-message", JSON.stringify(data)); */
+        }
         
-         io.sockets.in(room).emit("new-message", JSON.stringify(data));    
+       
+        io.sockets.in(room).emit("new-message", JSON.stringify(data));    
+       } catch(e){
+           console.log(e);
+       }
     });
 
 
     client.on('seen', async()=>{
-        const collection = connectedObj.db(Dbname).collection('users');
-        const updateFlag = await collection.updateOne({_id : ObjectId(client.userUniqueId), 'connections.friendId': ObjectId(client.sendingTo)}, {$set: {'connections.$[].messageBuffer': []}});
+        try{
+            const collection = connectedObj.db(Dbname).collection('users');
+            const updateFlag = await collection.updateOne({_id : ObjectId(client.userUniqueId), 'connections.friendId': ObjectId(client.sendingTo)}, {$set: {'connections.$[].messageBuffer': []}}); 
+            console.log('seen');
+        }catch(e){
+            console.log(e);
+        }
+
     })
      
+
     client.on('member_remove_req', (data)=>{ 
         admin_id = client.id; 
         if(rooms[client.currentRoom].admin == id_to_email[client.id]){
@@ -167,12 +195,12 @@ io.on('connection',(client)=>{
     client.on("disconnectChat", async()=>{
          //console.log('user disconnected, client_id :' + client.id);  
          try{  
-             console.log(client.messageBuffer[client.sendingTo].length)
-            if(client.messageBuffer[client.sendingTo].length > 0){
+             //console.log(client.messageBuffer[client.sendingTo].length)
+            /*if(client.messageBuffer[client.sendingTo].length > 0){
                 const collection = connectedObj.db(Dbname).collection('users');
                 const updateFlag = await collection.updateOne({_id : ObjectId(client.sendingTo), 'connections.friendId': ObjectId(client.userUniqueId)}, {$push: {'connections.$[].messageBuffer': {$each : client.messageBuffer[client.sendingTo] }}});
-                io.sockets.in(client.sendingTo).emit('message-notif');
-            }
+                io.sockets.in(client.sendingTo).emit('message-notif', {name: client.fullname});
+            }*/
 
            console.log("disconnected" + client.currentRoom + " id " + client.id);
             //console.log(client);
@@ -193,11 +221,11 @@ io.on('connection',(client)=>{
         //console.log('user disconnected, client_id :' + client.id);  
         try{   
            
-            if(client.hasOwnProperty('messageBuffer') && client.messageBuffer[client.sendingTo].length > 0){
+            /*if(client.hasOwnProperty('messageBuffer') && client.messageBuffer[client.sendingTo].length > 0){
                 const collection = connectedObj.db(Dbname).collection('users');
                 const updateFlag = await collection.updateOne({_id : ObjectId(client.sendingTo), 'connections.friendId': ObjectId(client.userUniqueId)}, {$push: {'connections.$[].messageBuffer': {$each : client.messageBuffer[client.sendingTo] }}});
-                io.sockets.in(client.sendingTo).emit('message-notif');
-            }
+                io.sockets.in(client.sendingTo).emit('message-notif', {name: client.fullname});
+            }*/
 
            const userUniqueId = client.userUniqueId;
            const collection = connectedObj.db(Dbname).collection('users');
@@ -234,7 +262,7 @@ io.on('connection',(client)=>{
      }
      */
      const collection = connectedObj.db(Dbname).collection('users'); 
-     const data = await collection.find({_id :{$in : [ ObjectId(receiverId), ObjectId(senderId)]} },{projection:{_id: 1, firstname:1, lastname:1, proPic: 1, connections: {$elemMatch: { friendId : {$in : [ObjectId(receiverId), ObjectId(senderId)]}}}}}).toArray();
+     const data = await collection.find({_id :{$in : [ ObjectId(receiverId), ObjectId(senderId)]} },{projection:{_id: 1, firstname:1, lastname:1, proPic: 1, isOnline:1, connections: {$elemMatch: { friendId : {$in : [ObjectId(receiverId), ObjectId(senderId)]}}}}}).toArray();
      
      
      /*
@@ -246,21 +274,25 @@ io.on('connection',(client)=>{
      }
       * optimisation ends.
       */
-     
+
+
+    
      let privateRoomId = data[0].connections[0].privateChatId;
-     const newMessages = data[0]._id == senderId? data[0].connections[0].messageBuffer : data[1].connections[0].messageBuffer;
+     const newMessages = data[0]._id == client.userUniqueId? data[0].connections[0].messageBuffer : data[1].connections[0].messageBuffer;
      let friendData = data[0]._id == receiverId ? data[0] : data[1];
      delete friendData['connections']; 
-     console.log(data);
+     //console.log(data);
      client.join(privateRoomId);
      client.currentRoom = privateRoomId;
      client.uniqueId = senderId;     /* id of the sender for using in database */
-     client.sendingTo = receiverId; /* _id of the receiver */
+     client.sendingTo = receiverId;
+     client.isReceiverOnline = data[0]._id == senderId? data[1].isOnline : data[0].isOnline; /* _id of the receiver */
      client.messageBuffer = client.hasOwnProperty('messageBuffer')? client.messageBuffer : {};
      client.messageBuffer[receiverId] = [];
-     io.sockets.sockets[client.id].emit("connected", { friendData: friendData, newMessagesViaFriend: newMessages});
+     io.sockets.sockets[client.id].emit("connected", { friendData: friendData, isReceiverOnline: client.isReceiverOnline, newMessagesViaFriend: newMessages});
     }catch(e){
-        console.error(e);
+        console.log(e);
+        client.emit("rejected", "sorry couldn't connect");
     }
  });    
 });
@@ -278,12 +310,12 @@ app.post('/login', bodyParser.json(), (req, res)=>{
     var password = req.body.password;
     collection.find({email:email, password:password}).toArray((err, data)=> {
         if(!err && data.length>0){
-            if(data[0].auth==0){
+            //if(data[0].auth==0){
                 var  fullname =  data[0].firstname + data[0].lastname;
                 res.send({status:true, data:{FullName: fullname , email:email, password:password, about:data.about, gender:data.gender, uniqueUserId: data[0]._id}}); 
-            }else{
-                res.send({status:false, data:{err:"please verify your account first with the link in your email"}})
-            }
+           // }else{
+           //     res.send({status:false, data:{err:"please verify your account first with the link in your email"}})
+           // }
             
         }
         else{
@@ -475,9 +507,23 @@ app.post("/create-room", bodyParser.json(), (req, res)=>{
         if(!err && data.length > 0){
             var fullname = data[0].firstname + " " + data[0].lastname;
             var roomCode = fullname + req.body.roomName;
-            rooms[roomCode] = {roomName: req.body.roomName, createdBy: fullname, description:req.body.roomDescription, category:req.body.roomCategory, type:req.body.roomPrivacy, password:req.body.roomPassword,roomPic:req.body.roomPic, admin:req.body.creator, roomCode:roomCode, roomLink:'http://localhost:4200/chat-dashboard/message-area', roomMembers:0, memberDetails:{}};
+            rooms[roomCode] = {
+                 roomName: req.body.roomName,
+                 createdBy: fullname, 
+                 description:req.body.roomDescription, 
+                 category:req.body.roomCategory, 
+                 type:req.body.roomPrivacy, 
+                 password:req.body.roomPassword || "",
+                 roomPic:req.body.roomPic, 
+                 admin:req.body.creator, 
+                 roomCode:roomCode, 
+                 roomLink:'http://localhost:4200/chat-dashboard/message-area', 
+                 roomMembers:0,
+                 memberDetails:{}
+            };
             let immediate = JSON.parse(JSON.stringify(rooms[roomCode]));
             delete immediate['admin'];
+            console.log(rooms[roomCode]);
             res.send({status:true, data:immediate});
         }else{
             res.send({status:false});
@@ -516,17 +562,16 @@ app.post('/get-available-rooms', bodyParser.json(), (req, res)=>{
         for(var room_code in rooms){
             let immediate = JSON.parse(JSON.stringify(rooms[room_code]));
             delete immediate['admin'];
-            data.push(immediate);
-            
+            if(immediate['password'] != "");
+              immediate.protected = true;
+            delete immediate['password']
+            data.push(immediate); 
         }
     if(data[0] == ""){
        res.send({status:false});
     } else{
         res.send({status:true, data: data});
-    }
-   
-        
-        
+    } 
     }else{
        if(req.body.withCode == 1){
         
@@ -536,23 +581,29 @@ app.post('/get-available-rooms', bodyParser.json(), (req, res)=>{
             res.send({status:true, data:data});
             }else{
                 res.send({status:false});
-            }
-          
-           
-           
+            } 
        }
     }
 })
 
 
 app.get('/room-by-code/:roomCode', bodyParser.json(), (req, res)=>{
-    var roomCode = req.params['roomCode'];
-    let data = rooms.hasOwnProperty(req.params['roomCode'])?JSON.parse(JSON.stringify(rooms[roomCode])): "";
-    if(data != ""){
-        delete data['admin'];
-        res.send({status:true, data:data});
-    }else{
-        res.send({status:false});
+    try{
+        var roomCode = req.params['roomCode'];
+        let data = rooms.hasOwnProperty(req.params['roomCode'])?JSON.parse(JSON.stringify(rooms[roomCode])): "";
+        if(data != ""){
+            if(data['password'] != "");
+                data.protected = true;
+                
+            delete data['password']
+            delete data['admin'];
+            res.send({status:true, data:data});
+        }else{
+            res.send({status:false, message: "no room"});
+        }
+    }catch(e){
+        console.log(e);
+        res.send({status: false, message: "couldn't join"})
     }
 })
 
@@ -738,3 +789,15 @@ app.get("/get", bodyParser.json(), async(req, res)=>{
     res.send({data: userData});
 })
 
+app.delete("/remove-connection/:email/:friendId", async(req, res)=>{
+    try {
+        const userEmail  =  req.params.email;
+        const friendId = req.params.friendId;
+        const collection = connectedObj.db(Dbname).collection('users')
+        var data = await collection.updateOne({email:userEmail},{$pull: {"connections": {friendId: ObjectId(friendId)}}})
+        res.status(200).json({status: true, message: "friend removed"});
+    } catch (error) {
+        console.log(error);
+        res.status(200).json({status: false, message: "couldn't delete friend"});
+    }
+})

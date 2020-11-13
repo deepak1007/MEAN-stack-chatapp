@@ -18,6 +18,7 @@ export class FriendCircleComponent implements OnInit, OnDestroy {
   fName;
   fAbout;
   connection_list;
+  default_pic;
   _currentPage:number = 1;
   get current_page(){
     return isNaN(this._currentPage)?" ": this._currentPage;
@@ -37,7 +38,9 @@ export class FriendCircleComponent implements OnInit, OnDestroy {
   getConnectionsUnsubscribe;
 
 
-  constructor(private httpc:HttpClient, private router:Router , private ds:DataService, private cs: ChatServiceService, private ss: StateService) { }
+  constructor(private httpc:HttpClient, private router:Router , private ds:DataService, private cs: ChatServiceService, private ss: StateService) {
+    this.default_pic = 'assets\icons\account.png';
+   }
 
   ngOnInit(): void {
     this.ds.spinnerControl('show');
@@ -68,12 +71,15 @@ export class FriendCircleComponent implements OnInit, OnDestroy {
    
   }
   
-  removeConnection(index, userId){
-    this.httpc.post('http://localhost:8000/remove-friend/' + localStorage.getItem('email'), {connectToId: userId}).subscribe((response:any)=>{
-      if(response.status == 200){
+  removeConnection(index, friendId){
+    this.ds.spinnerControl('show');
+    this.httpc.delete('http://localhost:8000/remove-connection/' + localStorage.getItem('email')+ '/' + friendId).subscribe((response:any)=>{
+      if(response.status){
              this.connection_list.splice(index, 1);
+             alert(response.message);
              this.ds.spinnerControl('hide');
       }else{
+       alert(response.message)
        this.ds.spinnerControl('hide');
       }
    }, (err)=>{

@@ -9,7 +9,7 @@
             </div>
             <div class="chat-partner-name" [style]='{display:group?"":""}'>
               <a href='#' (click)="showGroupMenu($event)"> {{chat_name}}</a> &nbsp;
-              <span class="status online" style='display:none'></span>
+              <span class="status online" [style]='{display: isReceiverOnline? "inline-block" : "none"}'></span>
             </div> 
             <div class="chatbox-icons">
               <!--<a href="javascript:void(0);"><i class="fa fa-minus"></i></a>-->

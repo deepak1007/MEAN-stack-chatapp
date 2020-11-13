@@ -177,9 +177,19 @@ td, th {
 }
 */
 
-
+.empty-list{
+    width: calc(300px + 5vw);
+    overflow: hidden;
+    position: absolute;
+    top:55%;
+    left:50%;
+    transform: translate(-50%, -50%);
+}
+.empty-list img{
+    width: 100%;
+}
 .requesters-container{
-    width:80%;
+    width:100%;
     min-height:70vh;
     display:flex;
     justify-content: space-evenly;
@@ -209,11 +219,13 @@ td, th {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
 }
 .indi-requester .head img{
     width:90%;
     height:90%;
     border-radius: 50%;
+    border: 2px solid white;
 }
 .body{
     width:60%;
@@ -225,7 +237,20 @@ td, th {
     display:flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
 }
+
+/*.body::after{
+    content: "";
+    display: block;
+    position: absolute;
+    top:105%;
+    width: 102%;
+    height: 10px;
+    border-radius: 40%;
+    background: rgba(0,0,0,0.1);
+}
+*/
 
 .body .name{
     font-size:18px;
@@ -236,12 +261,13 @@ td, th {
     width:100%;
     left:unset;
     top:unset;
-    bottom:0px;
+    bottom:-5px;
     text-align:center;
-    padding:2px;
-    
+    padding:2px;  
 }
-
+.controls .btn{
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
 .isempty-image{
     position:absolute;
     top:50%;

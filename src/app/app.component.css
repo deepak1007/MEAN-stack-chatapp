@@ -31,6 +31,28 @@
 }
 
 
+.alert{
+    display:inline-block;
+    z-index: 99990;
+    position:fixed;
+    bottom:0px;
+    width: 100%;
+    text-align: center;
+    animation: fade-away 7s !important;
+    animation-fill-mode: forwards !important;
+}
+
+
+
+@keyframes fade-away{
+    0%{
+        opacity: 100%;
+    }
+    100%{
+        opacity: 0%;
+        display:none;
+    }
+}
 @media screen and (max-width:600px){
       
     .main-screen{

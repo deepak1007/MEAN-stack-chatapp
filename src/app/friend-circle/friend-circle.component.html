@@ -1,10 +1,14 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="circle-container">
+            <div class="empty-list" *ngIf='connection_list.length == 0'>
+                <img src="assets/Alone-rafiki.png" alt="">
+                <h3 class='text-center'><small>no friends</small></h3>
+            </div>
+            <div class="circle-container" *ngIf='connection_list.length != 0'>
                 <div class="center-details">
                     <div class="self-pic" [class.hide]='showDetails == true'>
-                        <img [src]="selfProPic" alt="">
+                        <img [src]="selfProPic || default_pic" alt="">
                     </div>
                     <div class="friend-details" *ngIf='showDetails == true'>
                         <div class="name">
@@ -16,11 +20,11 @@
                     </div>
                 </div>
 
-                <div class="circle">
+                <div class="circle" *ngIf='connection_list.length != 0'>
                     <div *ngFor='let friend of connection_list; let i = index' class="div-friend"  [ngClass]="{'top': i==0, 'right': i==2, 'bottom': i==1, 'left': i==3, 'div-friend-online': friend.isOnline == true}" (mouseover)='showDetailsFunction(i)' (mouseleave)="showDetails = false">
                         <div class="message-indicator" *ngIf='friend.noOfMessages > 0'>{{ friend.noOfMessages }}</div>
                         <div class="profile-pic" *ngIf='i >= current_page-1 && (i <= current_page + max_at_one_page)' >
-                            <img [src]="'http://localhost:8000/' + friend.proPic" alt="">
+                            <img [src]="friend.proPic?'http://localhost:8000/' + friend.proPic :  default_pic" alt="">
                         </div>
                         <div class="options"  *ngIf='i >= current_page-1 && (i <= current_page + max_at_one_page)' >
                             <div class="message" (click)='message(friend._id)'><img src="assets/icons/chat.png" alt="chat icon"></div>

@@ -637,6 +637,54 @@ input[type='file']{
 
 }
 
+
+.room-password-modal{
+  width: calc(300px + 8vw);
+  padding: 40px 15px;
+  position: fixed;
+  top: -300px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  background: #ebebeb;
+  box-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+}
+.room-password-modal h4{
+  color: black;
+}
+.room-password-modal .close-modal{
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 20px;
+  cursor: pointer;
+  color: black;
+  font-weight: 500;
+}
+
+.room-password-modal form{
+  width: 100%;
+  text-align: center;
+}
+.room-password-modal label{
+  width: 100% !important;
+  display: block;
+}
+.room-password-modal .form-control{
+  width: 100%;
+}
+
+.show-modal{
+  animation: come-down-modal 1s ease-in forwards ;
+}
+@keyframes come-down-modal{
+  0%{
+    top: -300px;
+  }
+  100%{
+    top: 50px; 
+  }
+}
 @media screen and (max-width:700px){
   .container{
        display:inline-block;
